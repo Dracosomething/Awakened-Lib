@@ -9,4 +9,8 @@ import java.util.UUID;
 
 public interface IObjects extends INBTSerializable<CompoundTag> {
     HashMap<UUID, ClientTickingObject> getObjects();
+
+    void addObject(UUID objectUUID, ClientTickingObject object);
+
+    public void removeObject(UUID objectUUID);
 }

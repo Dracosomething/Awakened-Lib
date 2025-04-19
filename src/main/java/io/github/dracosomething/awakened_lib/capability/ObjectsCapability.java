@@ -4,11 +4,15 @@ import io.github.dracosomething.awakened_lib.library.ClientTickingObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 
 import java.util.HashMap;
 import java.util.UUID;
 
 public class ObjectsCapability implements IObjects {
+    public static final Capability<IObjects> CAPABILITY = CapabilityManager.get(new CapabilityToken<IObjects>() {});
     private HashMap<UUID, ClientTickingObject> objects = new HashMap<>();
 
     public void addObject(UUID objectUUID, ClientTickingObject object) {
@@ -27,12 +31,9 @@ public class ObjectsCapability implements IObjects {
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
-        ListTag objects = new ListTag();
+        CompoundTag objects = new CompoundTag();
         this.objects.forEach((UUID, object) -> {
-            CompoundTag entry = new CompoundTag();
-            entry.put("object", object.toNBT());
-            entry.putUUID("UUID", UUID);
-            objects.add(entry);
+            objects.put(UUID.toString(), object.toNBT());
         });
         tag.put("entries", objects);
         return tag;
@@ -40,6 +41,13 @@ public class ObjectsCapability implements IObjects {
 
     @Override
     public void deserializeNBT(CompoundTag tag) {
-
+        CompoundTag entries = tag.getCompound("entries");
+        entries.getAllKeys().forEach((uuid) -> {
+            CompoundTag object = entries.getCompound(uuid);
+            ClientTickingObject object1 = new ClientTickingObject() {
+            };
+            object1 = object1.fromNBT(object);
+            objects.put(UUID.fromString(uuid), object1);
+        });
     }
 }

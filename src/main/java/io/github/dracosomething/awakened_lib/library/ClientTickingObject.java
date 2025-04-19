@@ -1,7 +1,7 @@
 package io.github.dracosomething.awakened_lib.library;
 
 import com.google.errorprone.annotations.ForOverride;
-import io.github.dracosomething.awakened_lib.world.ClientTickingObjectsSaveData;
+import io.github.dracosomething.awakened_lib.capability.ObjectsCapability;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -135,8 +135,9 @@ public abstract class ClientTickingObject {
     }
 
     public final void create() {
-        ClientTickingObjectsSaveData data = ClientTickingObjectsSaveData.get(this.level);
-        data.addObject(this.uuid, this);
+        level.getCapability(ObjectsCapability.CAPABILITY).ifPresent((cap) -> {
+            cap.addObject(this.uuid, this);
+        });
         place();
         Task task = new Task() {
             @Override
@@ -148,8 +149,9 @@ public abstract class ClientTickingObject {
     }
 
     public final void discard() {
-        ClientTickingObjectsSaveData data = ClientTickingObjectsSaveData.get(this.level);
-        data.removeObject(this.uuid);
+        level.getCapability(ObjectsCapability.CAPABILITY).ifPresent((cap) -> {
+            cap.removeObject(this.uuid);
+        });
         this.life = 0;
         this.uuid = null;
         this.timer.cancel();

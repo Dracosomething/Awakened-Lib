@@ -1,7 +1,7 @@
 package io.github.dracosomething.awakened_lib.handler;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
-import io.github.dracosomething.awakened_lib.world.ClientTickingObjectsSaveData;
+import io.github.dracosomething.awakened_lib.capability.ObjectsCapability;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -13,17 +13,14 @@ import java.io.IOException;
 @Mod.EventBusSubscriber(modid = Awakened_lib.MODID)
 public class ClientTickingObjectsHandler {
     @SubscribeEvent
-    public static void onJoin(LevelEvent.Load event) throws IOException {
+    public static void onJoin(LevelEvent.Load event) {
         if (event.getLevel().getServer() != null) {
             MinecraftServer server = event.getLevel().getServer();
-            if (server.overworld() != null) {
-                ClientTickingObjectsSaveData data = ClientTickingObjectsSaveData.get(server.overworld());
-                System.out.println(server.overworld().getDataStorage().readTagFromDisk("client_ticking_objects", 1));
-                System.out.println("placing objects");
-                data.getObjects().forEach((uuid, object) -> {
-                    object.place();
+            server.getAllLevels().forEach((level) -> {
+                level.getCapability(ObjectsCapability.CAPABILITY).ifPresent((cap) -> {
+
                 });
-            }
+            });
         }
     }
 }
