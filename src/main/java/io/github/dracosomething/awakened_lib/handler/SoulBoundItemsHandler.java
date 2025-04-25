@@ -1,0 +1,115 @@
+package io.github.dracosomething.awakened_lib.handler;
+
+import com.mojang.serialization.Codec;
+import io.github.dracosomething.awakened_lib.Awakened_lib;
+import io.github.dracosomething.awakened_lib.helper.ClassHelper;
+import io.github.dracosomething.awakened_lib.helper.EngravingHelper;
+import io.github.dracosomething.awakened_lib.library.SoulBoundItem;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Mod.EventBusSubscriber(modid = Awakened_lib.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+public class SoulBoundItemsHandler {
+    private static List<ItemStack> items = new ArrayList<>();
+    private static List<Item> soulBoundItems;
+
+    public static void onClientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            soulBoundItems = ForgeRegistries.ITEMS.getValues().stream().filter((item) -> {
+                return ClassHelper.hasInterface(item.getClass(), SoulBoundItem.class);
+            }).toList();
+        });
+    }
+
+    @SubscribeEvent
+    public static void onDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            player.getInventory().items.forEach((item) -> {
+                if (soulBoundItems.contains(item.getItem())) {
+                    SoulBoundItem soulBoundItem = (SoulBoundItem) item.getItem();
+                    if (item.getDamageValue() >= soulBoundItem.minimumDurability() &&
+                    player.experienceLevel >= soulBoundItem.getXPRequirement()) {
+                        item.setDamageValue(item.getDamageValue() - soulBoundItem.getDurabilityCost());
+                        items.add(item);
+                    }
+                }
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public static void onDrop(LivingDropsEvent event) {
+        event.getDrops().removeAll(items);
+    }
+
+    @SubscribeEvent
+    public static void onClone(PlayerEvent.Clone event) {
+        items.forEach((item) -> {
+            SoulBoundItem soulBoundItem = (SoulBoundItem) item.getItem();
+            if (!soulBoundItem.keepsEnchantments()) {
+                EngravingHelper.RemoveAllEnchantments(item);
+            }
+            event.getEntity().getInventory().add(item);
+        });
+    }
+
+    @SubscribeEvent
+    public static void onPlayerDropitem(ItemTossEvent event) {
+        if (soulBoundItems.contains(event.getEntity().getItem().getItem())) {
+            SoulBoundItem item = (SoulBoundItem) event.getEntity().getItem().getItem();
+            if (!item.canBeDropped()) {
+                ItemStack stack = event.getEntity().getItem();
+                event.getPlayer().getInventory().add(stack);
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void keepItems(TickEvent.PlayerTickEvent event) {
+            event.player.getInventory().items.forEach((item) -> {
+                if (soulBoundItems.contains(item.getItem())) {
+                    CustomData data = item.get(DataComponents.CUSTOM_DATA);
+                    if (data == null) return;
+                    data.update(tag -> {
+                        if (!tag.hasUUID("owner")) {
+                            tag.putUUID("owner", event.player.getUUID());
+                        }
+                    });
+                    item.set(DataComponents.CUSTOM_DATA, data);
+                    CompoundTag tag = data.copyTag();
+                    if (event.player.getUUID() != tag.getUUID("owner")) {
+                        event.player.level().getServer().getAllLevels().forEach((level) -> {
+                            Entity entity = level.getEntity(tag.getUUID("owner"));
+                            if (entity instanceof Player player) {
+                                player.getInventory().add(item);
+                                event.player.getInventory().removeItem(item);
+                            }
+                        });
+                    }
+                }
+            });
+    }
+}
