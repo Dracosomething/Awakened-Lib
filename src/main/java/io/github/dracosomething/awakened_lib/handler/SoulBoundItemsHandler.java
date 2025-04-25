@@ -1,15 +1,11 @@
 package io.github.dracosomething.awakened_lib.handler;
 
-import com.mojang.serialization.Codec;
 import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.helper.ClassHelper;
-import io.github.dracosomething.awakened_lib.helper.EngravingHelper;
+import io.github.dracosomething.awakened_lib.helper.EnchantmentHelper;
 import io.github.dracosomething.awakened_lib.library.SoulBoundItem;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -24,11 +20,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = Awakened_lib.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class SoulBoundItemsHandler {
@@ -69,7 +63,7 @@ public class SoulBoundItemsHandler {
         items.forEach((item) -> {
             SoulBoundItem soulBoundItem = (SoulBoundItem) item.getItem();
             if (!soulBoundItem.keepsEnchantments()) {
-                EngravingHelper.RemoveAllEnchantments(item);
+                EnchantmentHelper.RemoveAllEnchantments(item);
             }
             event.getEntity().getInventory().add(item);
         });
