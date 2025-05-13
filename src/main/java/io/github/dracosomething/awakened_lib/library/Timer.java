@@ -4,7 +4,7 @@ import io.github.dracosomething.awakened_lib.util.TimerHelper;
 
 import java.util.Arrays;
 
-public final class Timer {
+public final class Timer implements Runner {
     private Task[] tasks;
     private String name;
     public boolean canceled;
@@ -53,6 +53,25 @@ public final class Timer {
 
     public String getName() {
         return name;
+    }
+
+    public void runTasks() {
+        if (!this.canceled) {
+            if (this.getTasks().length <= 0) return;
+            for (Task task : this.getTasks()) {
+                if (task != null) {
+                    task.timeElapsed++;
+                    boolean canUpdate = (task.timeElapsed % task.duration == 0) && (task.timeElapsed >= task.delay);
+                    if (canUpdate) {
+                        task.run();
+                        task.timeElapsed = 0;
+                    }
+                }
+            }
+        } else {
+            TimerHelper.remove(this.getName());
+            this.cancel();
+        }
     }
 
     public void setName(String name) {
