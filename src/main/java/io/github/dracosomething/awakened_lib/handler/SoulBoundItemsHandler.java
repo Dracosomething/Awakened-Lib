@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -27,21 +28,12 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = Awakened_lib.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class SoulBoundItemsHandler {
     private static List<ItemStack> items = new ArrayList<>();
-    private static List<Item> soulBoundItems;
-
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-            soulBoundItems = ForgeRegistries.ITEMS.getValues().stream().filter((item) -> {
-                return ClassHelper.hasInterface(item.getClass(), SoulBoundItem.class);
-            }).toList();
-        });
-    }
 
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof Player player) {
             player.getInventory().items.forEach((item) -> {
-                if (soulBoundItems.contains(item.getItem())) {
+                if (ClassHelper.isAnotatedWith(item.getClass(), SoulBoundItem.class)) {
                     SoulBoundItem soulBoundItem = (SoulBoundItem) item.getItem();
                     if (item.getDamageValue() >= soulBoundItem.minimumDurability() &&
                     player.experienceLevel >= soulBoundItem.getXPRequirement()) {
@@ -71,7 +63,7 @@ public class SoulBoundItemsHandler {
 
     @SubscribeEvent
     public static void onPlayerDropitem(ItemTossEvent event) {
-        if (soulBoundItems.contains(event.getEntity().getItem().getItem())) {
+        if (ClassHelper.isAnotatedWith(event.getEntity().getItem().getClass(), SoulBoundItem.class)) {
             SoulBoundItem item = (SoulBoundItem) event.getEntity().getItem().getItem();
             if (!item.canBeDropped()) {
                 ItemStack stack = event.getEntity().getItem();
@@ -84,7 +76,7 @@ public class SoulBoundItemsHandler {
     @SubscribeEvent
     public static void keepItems(TickEvent.PlayerTickEvent event) {
             event.player.getInventory().items.forEach((item) -> {
-                if (soulBoundItems.contains(item.getItem())) {
+                if (ClassHelper.isAnotatedWith(item.getClass(), SoulBoundItem.class)) {
                     CustomData data = item.get(DataComponents.CUSTOM_DATA);
                     if (data == null) return;
                     data.update(tag -> {

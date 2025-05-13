@@ -1,21 +1,13 @@
 package io.github.dracosomething.awakened_lib.library;
 
-public interface SoulBoundItem {
-    public boolean canBeDropped();
+public @interface SoulBoundItem {
+    boolean canBeDropped() default false;
 
-    default int getXPRequirement() {
-        return 0;
-    }
+    int getXPRequirement() default 0;
 
-    default boolean keepsEnchantments() {
-        return true;
-    }
+    boolean keepsEnchantments() default true;
 
-    default int getDurabilityCost() {
-        return 0;
-    }
+    int getDurabilityCost() default 0;
 
-    default double minimumDurability() {
-        return 0;
-    }
+    double minimumDurability() default 0;
 }
