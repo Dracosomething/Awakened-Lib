@@ -1,11 +1,17 @@
 package io.github.dracosomething.awakened_lib.library;
 
 import io.github.dracosomething.awakened_lib.events.ObjectEvent;
+import io.github.dracosomething.awakened_lib.helper.NBTHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -115,7 +121,7 @@ public abstract class TickingObject implements Clearable {
         return true;
     }
 
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("life", this.life);
         tag.putInt("id", this.id);
@@ -129,10 +135,12 @@ public abstract class TickingObject implements Clearable {
         tag.put("hitbox", listTag);
         tag.putLong("pos", this.pos.asLong());
         tag.putUUID("UUID", this.uuid);
+        CompoundTag key = NBTHelper.parseResourceKey(this.level.dimension());
+        tag.put("level", key);
         return tag;
     }
 
-    public void load(CompoundTag tag) {
+    public void load(CompoundTag tag, HolderLookup.Provider provider) {
         this.life = tag.getInt("life");
         this.id = tag.getInt("id");
         ListTag listTag = tag.getList("hitbox", 6);
@@ -150,5 +158,10 @@ public abstract class TickingObject implements Clearable {
         } else {
             this.uuid = UUID.randomUUID();
         }
+        CompoundTag locationTag = tag.getCompound("level").getCompound("location");
+        ResourceLocation location = NBTHelper.parseTagToLocation(locationTag);
+        ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, location);
+        Level level = provider.lookupOrThrow(Registries.DIMENSION).getOrThrow(key).get();
+        this.level = level;
     }
 }
