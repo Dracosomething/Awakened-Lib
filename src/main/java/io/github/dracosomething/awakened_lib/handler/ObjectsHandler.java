@@ -26,7 +26,18 @@ public class ObjectsHandler {
             MinecraftServer server = event.getLevel().getServer();
             server.getAllLevels().forEach((level) -> {
                 ObjectsCapability.getFrom(level).ifPresent((data) -> {
-                    System.out.println("erwerewrwe");
+                    data.deserializeNBT(level.registryAccess(), data.serializeNBT(level.registryAccess()));
+                });
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public static void onUnload(LevelEvent.Unload event) {
+        if (event.getLevel().getServer() != null) {
+            MinecraftServer server = event.getLevel().getServer();
+            server.getAllLevels().forEach((level) -> {
+                ObjectsCapability.getFrom(level).ifPresent((data) -> {
                     data.deserializeNBT(level.registryAccess(), data.serializeNBT(level.registryAccess()));
                 });
             });
