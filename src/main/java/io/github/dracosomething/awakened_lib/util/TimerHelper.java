@@ -12,28 +12,28 @@ import java.util.HashMap;
 
 @Mod.EventBusSubscriber(modid = Awakened_lib.MODID)
 public class TimerHelper {
-    private static HashMap<String, Runner> timers = new HashMap<>();
+    private static HashMap<String, Runner> RUNNERS = new HashMap<>();
 
-    public static boolean contains(Runner timer) {
-        return contains(Runner.getName(), timer);
+    public static boolean contains(Runner runner) {
+        return contains(runner.getName(), runner);
     }
 
     public static boolean contains(String name) {
-        Runner timer = timers.get(name);
-        return contains(name, timer) && timer != null;
+        Runner runner = RUNNERS.get(name);
+        return contains(name, runner) && runner != null;
     }
 
-    public static boolean contains(String name, Runner timer) {
-        return timers.containsKey(name) && timers.containsValue(timer);
+    public static boolean contains(String name, Runner runner) {
+        return RUNNERS.containsKey(name) && RUNNERS.containsValue(runner);
     }
 
-    public static boolean add(Runner timer) {
-        timers.put(Runner.getName(), timer);
-        return contains(timer);
+    public static boolean add(Runner runner) {
+        RUNNERS.put(runner.getName(), runner);
+        return contains(runner);
     }
 
     public static boolean remove(String name) {
-        timers.remove(name);
+        RUNNERS.remove(name);
         return !contains(name);
     }
 
@@ -48,8 +48,8 @@ public class TimerHelper {
     }
 
         private static void runTasks() {
-            if (timers.isEmpty()) return;
-            for (Runner runner : timers.values()) {
+            if (RUNNERS.isEmpty()) return;
+            for (Runner runner : RUNNERS.values()) {
                 runner.runTasks();
             }
         }
