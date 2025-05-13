@@ -1,5 +1,7 @@
 package io.github.dracosomething.awakened_lib.library;
 
+import io.github.dracosomething.awakened_lib.capability.ObjectsCapability;
+import io.github.dracosomething.awakened_lib.capability.ObjectsProvider;
 import io.github.dracosomething.awakened_lib.events.ObjectEvent;
 import io.github.dracosomething.awakened_lib.helper.NBTHelper;
 import net.minecraft.core.BlockPos;
@@ -56,6 +58,7 @@ public abstract class TickingObject implements Clearable {
     public void onRemove() {}
 
     public void clearContent() {
+        ObjectsCapability.removeObject(this.uuid, this, this.level);
         this.ticker.cancel();
         this.life = 0;
         this.level = null;
@@ -67,6 +70,7 @@ public abstract class TickingObject implements Clearable {
     public final void place() {
         ObjectEvent.ObjectPlaceEvent event = new ObjectEvent.ObjectPlaceEvent(this, this.pos, this.life);
         if (!MinecraftForge.EVENT_BUS.post(event)) {
+            ObjectsCapability.addObject(this.uuid, this, this.level);
             onPlace();
             Task tick = new Task() {
                 @Override

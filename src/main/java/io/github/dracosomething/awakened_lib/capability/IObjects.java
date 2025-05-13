@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @AutoRegisterCapability
 public interface IObjects extends INBTSerializable<CompoundTag> {
-    HashMap<UUID, TickingObject> getObjects();
+    HashMap<UUID, TickingObject> getOBJECTS();
 
     void addObject(UUID objectUUID, TickingObject object);
 

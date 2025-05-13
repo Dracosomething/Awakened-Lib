@@ -38,7 +38,7 @@ public class TimerHelper {
     }
 
     @SubscribeEvent
-    private static void RunTimers(TickEvent.ServerTickEvent event) {
+    public static void RunTimers(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.START) {
             runTasks();
         }
