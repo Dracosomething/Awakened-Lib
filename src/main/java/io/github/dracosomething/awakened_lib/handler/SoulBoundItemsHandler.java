@@ -43,7 +43,7 @@ public class SoulBoundItemsHandler {
     }
 
     private static boolean isSoulBoundItem(Item item) {
-        return SOULBOUNDITEMS.contains(item);
+        return SOULBOUNDITEMS.contains(item) && item != Items.AIR;
     }
 
     @SubscribeEvent

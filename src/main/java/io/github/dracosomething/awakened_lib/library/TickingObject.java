@@ -70,6 +70,8 @@ public abstract class TickingObject implements Clearable {
     public final void place() {
         ObjectEvent.ObjectPlaceEvent event = new ObjectEvent.ObjectPlaceEvent(this, this.pos, this.life);
         if (!MinecraftForge.EVENT_BUS.post(event)) {
+            this.pos = event.getPos();
+            this.life = event.getLife();
             ObjectsCapability.addObject(this.uuid, this, this.level);
             onPlace();
             Task tick = new Task() {

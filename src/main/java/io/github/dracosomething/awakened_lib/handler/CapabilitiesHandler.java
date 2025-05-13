@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 @Mod.EventBusSubscriber(modid = Awakened_lib.MODID)
 public class CapabilitiesHandler {
     @SubscribeEvent
-    public static void registerLevelCaps(AttachCapabilitiesEvent<LevelChunk> event) {
+    public static void registerLevelCaps(AttachCapabilitiesEvent<Level> event) {
         event.addCapability(ObjectsCapability.ID, new ObjectsProvider());
     }
 
