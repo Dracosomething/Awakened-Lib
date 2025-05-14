@@ -2,6 +2,7 @@ package io.github.dracosomething.awakened_lib;
 
 import com.mojang.logging.LogUtils;
 import io.github.dracosomething.awakened_lib.handler.SoulBoundItemsHandler;
+import io.github.dracosomething.awakened_lib.registry.mainRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.food.FoodProperties;
@@ -38,6 +39,8 @@ public class Awakened_lib {
 
     public Awakened_lib(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
+        mainRegistry.register(modEventBus);
+
         modEventBus.addListener(SoulBoundItemsHandler::onClientSetup);
         MinecraftForge.EVENT_BUS.register(this);
     }

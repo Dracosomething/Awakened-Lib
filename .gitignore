@@ -4,3 +4,6 @@
 /build/
 /run/*
 /run/logs/
+/run/crash-reports/
+/run/downloads/
+/run/config/

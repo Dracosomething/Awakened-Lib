@@ -3,8 +3,11 @@ package io.github.dracosomething.awakened_lib.capability;
 import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.handler.CapabilitiesHandler;
 import io.github.dracosomething.awakened_lib.helper.NBTHelper;
+import io.github.dracosomething.awakened_lib.library.ObjectType;
 import io.github.dracosomething.awakened_lib.library.TickingObject;
+import io.github.dracosomething.awakened_lib.registry.object.objectRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -77,11 +80,15 @@ public class ObjectsCapability implements IObjects {
             CompoundTag locationTag = object.getCompound("level").getCompound("location");
             ResourceLocation location = NBTHelper.parseTagToLocation(locationTag);
             ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, location);
-            Level level = provider.lookupOrThrow(Registries.DIMENSION).getOrThrow(key).get();
-            TickingObject object1 = new TickingObject(1, level, new AABB(0,0,0,0,0,0), BlockPos.ZERO) {
-            };
-            object1.load(object, provider);
-            OBJECTS.put(UUID.fromString(uuid), object1);
+            Holder.Reference<Level> reference = provider.lookupOrThrow(Registries.DIMENSION).getOrThrow(key);
+            if (reference.get() instanceof Level) {
+                Level level = provider.lookupOrThrow(Registries.DIMENSION).getOrThrow(key).get();
+                int life = tag.getInt("life");
+                BlockPos pos = BlockPos.of(tag.getLong("pos"));
+                ObjectType<?> object1 = objectRegistry.REGISTRY.get().getValue(ResourceLocation.parse(object.getString("Location")));
+                TickingObject obj = object1.spawn(life, level, pos);
+                OBJECTS.put(UUID.fromString(uuid), obj);
+            }
         });
     }
 

@@ -33,6 +33,7 @@ public class TimerHelper {
     }
 
     public static boolean remove(String name) {
+        if (!RUNNERS.containsKey(name)) return false;
         RUNNERS.remove(name);
         return !contains(name);
     }

@@ -47,7 +47,7 @@ public final class Timer implements Runner {
     }
 
     public void clear() {
-        for (int i=1; i<=tasks.length; i++)
+        for (int i = 0; i <= tasks.length-1; i++)
             tasks[i] = null;
     }
 

@@ -1,7 +1,10 @@
 package io.github.dracosomething.awakened_lib.handler;
 
 import io.github.dracosomething.awakened_lib.capability.ObjectsCapability;
+import io.github.dracosomething.awakened_lib.registry.object.objectRegistry;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -42,5 +45,11 @@ public class ObjectsHandler {
                 });
             });
         }
+    }
+
+    @SubscribeEvent
+    public static void create(PlayerInteractEvent.LeftClickEmpty event) {
+        objectRegistry.EXAMPLE.get().spawn(100, event.getLevel(), event.getPos());
+        System.out.println("Succesfully created new object");
     }
 }
