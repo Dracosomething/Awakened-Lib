@@ -17,7 +17,7 @@ public class ObjectsHandler {
             MinecraftServer server = event.getLevel().getServer();
             server.getAllLevels().forEach((level) -> {
                 level.getCapability(ObjectsCapability.CAPABILITY).ifPresent((cap) -> {
-                    cap.serializeNBT(level.registryAccess());
+                    cap.deserializeNBT(level.registryAccess(), cap.serializeNBT(level.registryAccess()));
                 });
             });
         }
