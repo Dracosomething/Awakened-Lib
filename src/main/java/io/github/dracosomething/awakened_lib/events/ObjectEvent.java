@@ -3,8 +3,8 @@ package io.github.dracosomething.awakened_lib.events;
 import io.github.dracosomething.awakened_lib.library.TickingObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 
 public class ObjectEvent extends Event {
     private TickingObject object;
@@ -17,15 +17,13 @@ public class ObjectEvent extends Event {
         return object;
     }
 
-    @Cancelable
-    public static class ObjectTickEvent extends ObjectEvent {
+    public static class ObjectTickEvent extends ObjectEvent implements ICancellableEvent {
         public ObjectTickEvent(TickingObject object) {
             super(object);
         }
     }
 
-    @Cancelable
-    public static class ObjectPlaceEvent extends ObjectEvent {
+    public static class ObjectPlaceEvent extends ObjectEvent implements ICancellableEvent {
         private BlockPos pos;
         private int life;
 
@@ -52,8 +50,7 @@ public class ObjectEvent extends Event {
         }
     }
 
-    @Cancelable
-    public static class ObjectRemoveEvent extends ObjectEvent {
+    public static class ObjectRemoveEvent extends ObjectEvent implements ICancellableEvent {
         public ObjectRemoveEvent(TickingObject object) {
             super(object);
         }

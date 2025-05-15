@@ -1,7 +1,7 @@
 package io.github.dracosomething.awakened_lib.library;
 
 import io.github.dracosomething.awakened_lib.api.ObjectsAPI;
-import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsCapability;
+import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsAttachement;
 import io.github.dracosomething.awakened_lib.events.ObjectEvent;
 import io.github.dracosomething.awakened_lib.helper.NBTHelper;
 import net.minecraft.core.BlockPos;
@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.NeoForge;
 
@@ -52,7 +53,7 @@ public abstract class TickingObject implements Clearable {
     public abstract void onRemove();
 
     public void clearContent() {
-        ObjectsCapability.removeObject(this.uuid, this, this.level);
+        ObjectsAttachement.removeObject(this.uuid, this, this.getChunk());
         this.ticker.cancel();
         this.life = 0;
         this.level = null;
@@ -64,10 +65,10 @@ public abstract class TickingObject implements Clearable {
 
     public final void place() {
         ObjectEvent.ObjectPlaceEvent event = new ObjectEvent.ObjectPlaceEvent(this, this.pos, this.life);
-        if (!NeoForge.EVENT_BUS.post(event)) {
+        if (!NeoForge.EVENT_BUS.post(event).isCanceled()) {
             this.pos = event.getPos();
             this.life = event.getLife();
-            ObjectsCapability.addObject(this.uuid, this, this.level);
+            ObjectsAttachement.addObject(this.uuid, this, this.getChunk());
             onPlace();
             Task tick = new Task() {
                 @Override
@@ -81,10 +82,10 @@ public abstract class TickingObject implements Clearable {
 
     public final void tick() {
         ObjectEvent.ObjectTickEvent event = new ObjectEvent.ObjectTickEvent(this);
-        if (!NeoForge.EVENT_BUS.post(event)) {
+        if (!NeoForge.EVENT_BUS.post(event).isCanceled()) {
             if (this.life <= 0) {
                 ObjectEvent.ObjectRemoveEvent remove = new ObjectEvent.ObjectRemoveEvent(this);
-                if (!NeoForge.EVENT_BUS.post(remove)) {
+                if (!NeoForge.EVENT_BUS.post(remove).isCanceled()) {
                     onRemove();
                     this.clearContent();
                 }
@@ -193,6 +194,10 @@ public abstract class TickingObject implements Clearable {
         return this.getZ((2.0 * this.random.nextDouble() - 1.0) * randomScale);
     }
 
+    public LevelChunk getChunk() {
+        return this.level.getChunkAt(this.pos);
+    }
+
     public void addParticlesOnPos(ParticleOptions particles, double randomScale) {
         if (this.random == null) return;
         double d0 = random.nextGaussian() * 0.02;
@@ -270,7 +275,7 @@ public abstract class TickingObject implements Clearable {
         CompoundTag locationTag = tag.getCompound("level").getCompound("location");
         ResourceLocation location = NBTHelper.parseTagToLocation(locationTag);
         ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, location);
-        Level level = provider.lookupOrThrow(Registries.DIMENSION).getOrThrow(key).get();
+        Level level = provider.lookupOrThrow(Registries.DIMENSION).getOrThrow(key).value();
         this.level = level;
     }
 }

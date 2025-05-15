@@ -19,7 +19,7 @@ public class Awakened_lib {
         mainRegistry.register(modEventBus);
 
         modEventBus.addListener(SoulBoundItemsHandler::onClientSetup);
-        NeoForge.EVENT_BUS.register(this);
+//        NeoForge.EVENT_BUS.register(this);
     }
 
     public static Logger getLOGGER() {

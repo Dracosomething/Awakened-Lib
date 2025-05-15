@@ -51,14 +51,14 @@ public class SoulBoundItemsHandler {
     public static void onDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof Player player) {
             player.getInventory().items.forEach((item) -> {
-                if (isSoulBoundItem(item.getItem())) {
-                    SoulBoundItem soulBoundItem = (SoulBoundItem) item.getItem();
-                    if (item.getDamageValue() >= soulBoundItem.minimumDurability() &&
-                    player.experienceLevel >= soulBoundItem.getXPRequirement()) {
-                        item.setDamageValue(item.getDamageValue() - soulBoundItem.getDurabilityCost());
-                        items.add(item);
+                if (ClassHelper.isAnotatedWith(item.getItem().getClass(), SoulBoundItem.class)) {
+                    SoulBoundItem itemData = (SoulBoundItem) item.getItem();
+                    if (item.getDamageValue() >= itemData.minimumDurability() &&
+                            player.experienceLevel >= itemData.getXPRequirement()) {
+                        item.setDamageValue(item.getDamageValue() - itemData.getDurabilityCost());
                     }
                 }
+                items.add(item);
             });
         }
     }
@@ -71,8 +71,12 @@ public class SoulBoundItemsHandler {
     @SubscribeEvent
     public static void onClone(PlayerEvent.Clone event) {
         items.forEach((item) -> {
-            SoulBoundItem soulBoundItem = (SoulBoundItem) item.getItem();
-            if (!soulBoundItem.keepsEnchantments()) {
+            boolean bool = true;
+            if (ClassHelper.isAnotatedWith(item.getItem().getClass(), SoulBoundItem.class)) {
+                SoulBoundItem itemData = (SoulBoundItem) item.getItem();
+                bool = itemData.keepsEnchantments();
+            }
+            if (!bool) {
                 EnchantmentHelper.RemoveAllEnchantments(item);
             }
             event.getEntity().getInventory().add(item);
@@ -82,8 +86,13 @@ public class SoulBoundItemsHandler {
     @SubscribeEvent
     public static void onPlayerDropitem(ItemTossEvent event) {
         if (isSoulBoundItem(event.getEntity().getItem().getItem())) {
-            SoulBoundItem item = (SoulBoundItem) event.getEntity().getItem().getItem();
-            if (!item.canBeDropped()) {
+            Item item = event.getEntity().getItem().getItem();
+            boolean bool = false;
+            if (ClassHelper.isAnotatedWith(item.getClass(), SoulBoundItem.class)) {
+                SoulBoundItem itemData = (SoulBoundItem) event.getEntity().getItem().getItem();
+                bool = itemData.canBeDropped();
+            }
+            if (!bool) {
                 ItemStack stack = event.getEntity().getItem();
                 event.getPlayer().getInventory().add(stack);
                 event.setCanceled(true);
@@ -92,28 +101,28 @@ public class SoulBoundItemsHandler {
     }
 
     @SubscribeEvent
-    public static void keepItems(PlayerTickEvent event) {
-            event.getEntity().getInventory().items.forEach((item) -> {
-                if (isSoulBoundItem(item.getItem())) {
-                    CustomData data = item.get(DataComponents.CUSTOM_DATA);
-                    if (data == null) return;
-                    data.update(tag -> {
-                        if (!tag.hasUUID("owner")) {
-                            tag.putUUID("owner", event.getEntity().getUUID());
+    public static void keepItems(PlayerTickEvent.Post event) {
+        event.getEntity().getInventory().items.forEach((item) -> {
+            if (isSoulBoundItem(item.getItem())) {
+                CustomData data = item.get(DataComponents.CUSTOM_DATA);
+                if (data == null) return;
+                data.update(tag -> {
+                    if (!tag.hasUUID("owner")) {
+                        tag.putUUID("owner", event.getEntity().getUUID());
+                    }
+                });
+                item.set(DataComponents.CUSTOM_DATA, data);
+                CompoundTag tag = data.copyTag();
+                if (event.getEntity().getUUID() != tag.getUUID("owner")) {
+                    event.getEntity().level().getServer().getAllLevels().forEach((level) -> {
+                        Entity entity = level.getEntity(tag.getUUID("owner"));
+                        if (entity instanceof Player player) {
+                            player.getInventory().add(item);
+                            event.getEntity().getInventory().removeItem(item);
                         }
                     });
-                    item.set(DataComponents.CUSTOM_DATA, data);
-                    CompoundTag tag = data.copyTag();
-                    if (event.getEntity().getUUID() != tag.getUUID("owner")) {
-                        event.getEntity().level().getServer().getAllLevels().forEach((level) -> {
-                            Entity entity = level.getEntity(tag.getUUID("owner"));
-                            if (entity instanceof Player player) {
-                                player.getInventory().add(item);
-                                event.getEntity().getInventory().removeItem(item);
-                            }
-                        });
-                    }
                 }
-            });
+            }
+        });
     }
 }

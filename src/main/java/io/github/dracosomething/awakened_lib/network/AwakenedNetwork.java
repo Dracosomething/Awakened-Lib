@@ -1,47 +1,50 @@
 package io.github.dracosomething.awakened_lib.network;
 
-import com.google.common.graph.NetworkBuilder;
 import io.github.dracosomething.awakened_lib.Awakened_lib;
-import io.github.dracosomething.awakened_lib.network.p2c.SyncObjectsCapability;
-import io.netty.buffer.Unpooled;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.Connection;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.*;
-import net.minecraftforge.network.simple.SimpleFlow;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.Map;
 
+@EventBusSubscriber(modid = Awakened_lib.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class AwakenedNetwork {
-    private static final String PROTOCOL_VERSION = "1";
-    public static final EventNetworkChannel INSTANCE;
+    private static final Map<Packet, Origin> PAYLOADS = new HashMap<>();
 
-    public static <T extends Packet<T>> void sendToServer(T packet) {
-        Connection connection = Minecraft.getInstance().getConnection().getConnection();
-        if (INSTANCE.isRemotePresent(connection)) {
-            FriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), Minecraft.getInstance().player.registryAccess());
-            packet.getCoded().encode(buf, packet);
-            INSTANCE.send(buf, connection);
-        }
+    public static <T extends Packet> void registerPayload(T packet, Origin origin) {
+        PAYLOADS.put(packet, origin);
     }
 
-    public <T extends Packet<T>> void sendToClient(T packet, ServerPlayer player) {
-        Connection connection = player.connection.getConnection();
-        if (INSTANCE.isRemotePresent(connection)) {
-            FriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), player.server.registryAccess());
-            packet.getCoded().encode(buf, packet);
-            INSTANCE.send(buf, connection);
-        }
+    @SubscribeEvent
+    public static void register(final RegisterPayloadHandlersEvent event) {
+        final PayloadRegistrar payloadRegistrar = event.registrar(Awakened_lib.MODID).versioned("1.0.0").optional();
 
-    }
-
-    static {
-        ChannelBuilder builder = ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(Awakened_lib.MODID, "channnel")).networkProtocolVersion(1);
-        INSTANCE = builder.eventNetworkChannel();
+        PAYLOADS.forEach((packet, origin) -> {
+            switch (origin) {
+                case PLAY: {
+                    switch (packet.side()) {
+                        case CLIENT -> payloadRegistrar.playToClient(packet.type(), packet.codec(), packet.handler());
+                        case COMMON -> payloadRegistrar.playBidirectional(packet.type(), packet.codec(), packet.handler());
+                        case SERVER -> payloadRegistrar.playToServer(packet.type(), packet.codec(), packet.handler());
+                    }
+                }
+                case COMMON: {
+                    switch (packet.side()) {
+                        case CLIENT -> payloadRegistrar.commonToClient(packet.type(), packet.codec(), packet.handler());
+                        case COMMON -> payloadRegistrar.commonBidirectional(packet.type(), packet.codec(), packet.handler());
+                        case SERVER -> payloadRegistrar.commonToServer(packet.type(), packet.codec(), packet.handler());
+                    }
+                }
+                case CONFIG: {
+                    switch (packet.side()) {
+                        case CLIENT -> payloadRegistrar.configurationToClient(packet.type(), packet.codec(), packet.handler());
+                        case COMMON -> payloadRegistrar.configurationBidirectional(packet.type(), packet.codec(), packet.handler());
+                        case SERVER -> payloadRegistrar.configurationToServer(packet.type(), packet.codec(), packet.handler());
+                    }
+                }
+            }
+        });
     }
 }

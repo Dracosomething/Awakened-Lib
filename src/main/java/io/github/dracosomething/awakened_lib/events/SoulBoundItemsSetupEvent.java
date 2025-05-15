@@ -1,7 +1,7 @@
 package io.github.dracosomething.awakened_lib.events;
 
 import net.minecraft.world.item.Item;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 import java.util.List;
 

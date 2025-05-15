@@ -1,6 +1,7 @@
 package io.github.dracosomething.awakened_lib.registry.dataAttachment;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
+import io.github.dracosomething.awakened_lib.dataAttachements.ChunkObjectsProvider;
 import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsAttachement;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -11,7 +12,7 @@ import java.util.function.Supplier;
 
 public class DataAttachmentRegistry {
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES;
-    public static final Supplier<AttachmentType<ObjectsAttachement>> SOME_CACHE;
+    public static final Supplier<AttachmentType<ObjectsAttachement>> OBJECTS;
 
     public static void register(IEventBus eventBus) {
         ATTACHMENT_TYPES.register(eventBus);
@@ -19,8 +20,8 @@ public class DataAttachmentRegistry {
 
     static {
         ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, Awakened_lib.MODID);
-        SOME_CACHE = ATTACHMENT_TYPES.register(
-                "objects", () -> AttachmentType.builder(() -> new ObjectsAttachement()).build()
+        OBJECTS = ATTACHMENT_TYPES.register(
+                "objects", () -> AttachmentType.builder(() -> new ObjectsAttachement()).serialize(new ChunkObjectsProvider()).build()
         );
     }
 }

@@ -39,14 +39,19 @@ public class TimerHelper {
     }
 
     @SubscribeEvent
-    public static void RunTimers(ServerTickEvent event) {
+    public static void RunTimersPre(ServerTickEvent.Pre event) {
         runTasks();
     }
 
-        private static void runTasks() {
-            if (RUNNERS.isEmpty()) return;
-            for (Runner runner : RUNNERS.values()) {
-                runner.runTasks();
-            }
+    @SubscribeEvent
+    public static void RunTimersPost(ServerTickEvent.Post event) {
+        runTasks();
+    }
+
+    private static void runTasks() {
+        if (RUNNERS.isEmpty()) return;
+        for (Runner runner : RUNNERS.values()) {
+            runner.runTasks();
         }
     }
+}
