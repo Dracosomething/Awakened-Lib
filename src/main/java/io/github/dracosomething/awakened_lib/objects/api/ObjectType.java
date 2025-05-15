@@ -1,13 +1,11 @@
-package io.github.dracosomething.awakened_lib.library;
+package io.github.dracosomething.awakened_lib.objects.api;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class ObjectType<T extends TickingObject> {
     private final Function<ObjectType<T>, T> constructor;
@@ -23,13 +21,13 @@ public class ObjectType<T extends TickingObject> {
         this.boundingBox = boundingBox;
     }
 
-    public T spawn(int life, Level level, BlockPos pos) {
+    public T spawn(int life, Level level, Vec3 pos) {
         T object = create(life, level, pos);
         object.place();
         return object;
     }
 
-    public T create(int life, Level level, BlockPos pos) {
+    public T create(int life, Level level, Vec3 pos) {
         T object = this.constructor.apply(this);
         object.setPos(pos);
         object.setLevel(level);

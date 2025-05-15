@@ -1,4 +1,4 @@
-package io.github.dracosomething.awakened_lib.library;
+package io.github.dracosomething.awakened_lib.util;
 
 public interface Runner {
     default void schedule(Task task, long duration) {

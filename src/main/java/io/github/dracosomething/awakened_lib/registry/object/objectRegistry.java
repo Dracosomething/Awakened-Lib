@@ -1,7 +1,7 @@
 package io.github.dracosomething.awakened_lib.registry.object;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
-import io.github.dracosomething.awakened_lib.library.ObjectType;
+import io.github.dracosomething.awakened_lib.objects.api.ObjectType;
 import io.github.dracosomething.awakened_lib.objects.TestObject;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -10,10 +10,7 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.IRegistryExtension;
 import net.neoforged.neoforge.registries.RegistryBuilder;
-
-import java.util.function.Supplier;
 
 public class objectRegistry {
     private static final ResourceLocation OBJECTS_KEY = ResourceLocation.fromNamespaceAndPath(Awakened_lib.MODID, "ojects");

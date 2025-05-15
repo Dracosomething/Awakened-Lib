@@ -1,9 +1,12 @@
-package io.github.dracosomething.awakened_lib.library;
+package io.github.dracosomething.awakened_lib.objects.api;
 
 import io.github.dracosomething.awakened_lib.api.ObjectsAPI;
 import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsAttachement;
 import io.github.dracosomething.awakened_lib.events.ObjectEvent;
 import io.github.dracosomething.awakened_lib.helper.NBTHelper;
+import io.github.dracosomething.awakened_lib.util.Task;
+import io.github.dracosomething.awakened_lib.util.Timer;
+import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleOptions;
@@ -14,13 +17,17 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Clearable;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,7 +40,7 @@ public abstract class TickingObject implements Clearable {
     private int id;
     private Level level;
     private AABB boundingBox;
-    private BlockPos pos;
+    private Vec3 pos;
     private UUID uuid;
 
     public TickingObject(ObjectType<?> type) {
@@ -95,12 +102,35 @@ public abstract class TickingObject implements Clearable {
         }
     }
 
+    public List<Entity> getCollidingEntities() {
+        return this.level.getEntitiesOfClass(Entity.class, this.boundingBox, (this::isCollidingWith));
+    }
+
+    public boolean isCollidingWith(Entity entity) {
+        return entity.getBoundingBox().contains(this.pos) &&
+                this.boundingBox.contains(entity.position()) &&
+                entity.getBoundingBox().intersects(this.boundingBox) &&
+                this.boundingBox.intersects(entity.getBoundingBox());
+    }
+
+    protected RandomSource getRandom() {
+        return random;
+    }
+
+    protected Timer getTicker() {
+        return ticker;
+    }
+
     public void setLife(int life) {
         this.life = life;
     }
 
-    public void setPos(BlockPos pos) {
+    public void setPos(Vec3 pos) {
         this.pos = pos;
+    }
+
+    public void setPos(double x, double y, double z) {
+        this.pos = new Vec3(x, y, z);
     }
 
     public void setLevel(Level level) {
@@ -111,8 +141,14 @@ public abstract class TickingObject implements Clearable {
         this.boundingBox = boundingBox;
     }
 
-    public boolean isColidingWith(TickingObject object) {
-        return this.boundingBox.intersects(object.boundingBox);
+    public boolean isCollidingWith(TickingObject object) {
+        return this.boundingBox.intersects(object.boundingBox) && this.boundingBox.contains(this.pos);
+    }
+
+    public List<TickingObject> getCollidingObjects() {
+        return this.getChunk().getData(DataAttachmentRegistry.OBJECTS.get()).getOBJECTS().values().stream().filter((object) -> {
+           return object.isCollidingWith(this) && this.isCollidingWith(object);
+        }).toList();
     }
 
     public Level getLevel() {
@@ -132,7 +168,7 @@ public abstract class TickingObject implements Clearable {
     }
 
     public BlockPos blockPosition() {
-        return this.pos;
+        return new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ());
     }
 
     public boolean shouldBeSaved() {
@@ -156,11 +192,11 @@ public abstract class TickingObject implements Clearable {
     }
 
     public final double getX() {
-        return this.pos.getX();
+        return this.pos.x();
     }
 
     public final double getX(double multiplier) {
-        return this.pos.getX() + (double)this.getBbWidth() * multiplier;
+        return this.pos.x() + (double)this.getBbWidth() * multiplier;
     }
 
     public final double getRandomX(double randomScale) {
@@ -169,7 +205,7 @@ public abstract class TickingObject implements Clearable {
     }
 
     public final double getY() {
-        return this.pos.getY();
+        return this.pos.y();
     }
 
     public final double getY(double multiplier) {
@@ -182,7 +218,7 @@ public abstract class TickingObject implements Clearable {
     }
 
     public final double getZ() {
-        return this.pos.getZ();
+        return this.pos.z();
     }
 
     public final double getZ(double multiplier) {
@@ -195,7 +231,7 @@ public abstract class TickingObject implements Clearable {
     }
 
     public LevelChunk getChunk() {
-        return this.level.getChunkAt(this.pos);
+        return this.level.getChunkAt(this.blockPosition());
     }
 
     public void addParticlesOnPos(ParticleOptions particles, double randomScale) {
@@ -232,6 +268,23 @@ public abstract class TickingObject implements Clearable {
         this.level.addParticle(particles, x1, y1, z1, d3, d4, d5);
     }
 
+    public void addAdditionalSaveData(CompoundTag tag) {
+
+    }
+
+    public void readAdditionalSaveData(CompoundTag tag) {
+
+    }
+
+    public void moveTo(Vec3 movement) {
+        double x = movement.x;
+        double y = movement.y;
+        double z = movement.z;
+        double d0 = Mth.clamp(x, -3.0E7, 3.0E7);
+        double d1 = Mth.clamp(z, -3.0E7, 3.0E7);
+        this.setPos(d0, y, d1);
+    }
+
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putString("Location", ObjectsAPI.getRegistry().getKey(this.type).toString());
@@ -247,10 +300,11 @@ public abstract class TickingObject implements Clearable {
             listTag.add(DoubleTag.valueOf(this.boundingBox.maxZ));
             tag.put("hitbox", listTag);
         }
-        tag.putLong("pos", this.pos.asLong());
+        tag.put("pos", NBTHelper.parseVec3(this.pos));
         tag.putUUID("UUID", this.uuid);
         CompoundTag key = NBTHelper.parseResourceKey(this.level.dimension());
         tag.put("level", key);
+        this.addAdditionalSaveData(tag);
         return tag;
     }
 
@@ -266,7 +320,8 @@ public abstract class TickingObject implements Clearable {
                 listTag.getDouble(5),
                 listTag.getDouble(6)
         );
-        this.pos = BlockPos.of(tag.getLong("pos"));
+        CompoundTag pos = tag.getCompound("pos");
+        this.pos = new Vec3(pos.getDouble("x"), pos.getDouble("y"), pos.getDouble("z"));
         if (tag.hasUUID("UUID")) {
             this.uuid = tag.getUUID("UUID");
         } else {
@@ -277,5 +332,6 @@ public abstract class TickingObject implements Clearable {
         ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, location);
         Level level = provider.lookupOrThrow(Registries.DIMENSION).getOrThrow(key).value();
         this.level = level;
+        this.readAdditionalSaveData(tag);
     }
 }

@@ -1,4 +1,4 @@
-package io.github.dracosomething.awakened_lib.library;
+package io.github.dracosomething.awakened_lib.util;
 
 import io.github.dracosomething.awakened_lib.util.TimerHelper;
 

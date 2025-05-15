@@ -1,6 +1,6 @@
 package io.github.dracosomething.awakened_lib.events;
 
-import io.github.dracosomething.awakened_lib.library.TickingObject;
+import io.github.dracosomething.awakened_lib.objects.api.TickingObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.Event;
@@ -24,20 +24,20 @@ public class ObjectEvent extends Event {
     }
 
     public static class ObjectPlaceEvent extends ObjectEvent implements ICancellableEvent {
-        private BlockPos pos;
+        private Vec3 pos;
         private int life;
 
-        public ObjectPlaceEvent(TickingObject object, BlockPos pos, int life) {
+        public ObjectPlaceEvent(TickingObject object, Vec3 pos, int life) {
             super(object);
             this.pos = pos;
             this.life = life;
         }
 
-        public BlockPos getPos() {
+        public Vec3 getPos() {
             return pos;
         }
 
-        public void setPos(BlockPos pos) {
+        public void setPos(Vec3 pos) {
             this.pos = pos;
         }
 

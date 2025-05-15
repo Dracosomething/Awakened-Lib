@@ -1,4 +1,4 @@
-package io.github.dracosomething.awakened_lib.library;
+package io.github.dracosomething.awakened_lib.util;
 
 public abstract class Task implements Runnable {
     public long duration;

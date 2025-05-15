@@ -1,9 +1,8 @@
 package io.github.dracosomething.awakened_lib.dataAttachements;
 
-import io.github.dracosomething.awakened_lib.handler.CapabilitiesHandler;
 import io.github.dracosomething.awakened_lib.helper.NBTHelper;
-import io.github.dracosomething.awakened_lib.library.ObjectType;
-import io.github.dracosomething.awakened_lib.library.TickingObject;
+import io.github.dracosomething.awakened_lib.objects.api.ObjectType;
+import io.github.dracosomething.awakened_lib.objects.api.TickingObject;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import io.github.dracosomething.awakened_lib.registry.object.objectRegistry;
 import net.minecraft.core.BlockPos;
@@ -15,6 +14,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -65,7 +65,8 @@ public class ObjectsAttachement implements IObjects {
             objects.put(UUID.toString(), object.serializeNBT(provider));
         });
         tag.put("entries", objects);
-        return tag;    }
+        return tag;
+    }
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
@@ -79,9 +80,10 @@ public class ObjectsAttachement implements IObjects {
             if (reference.value() instanceof Level) {
                 Level level = provider.lookupOrThrow(Registries.DIMENSION).getOrThrow(key).value();
                 int life = tag.getInt("life");
-                BlockPos pos = BlockPos.of(tag.getLong("pos"));
-                ObjectType<?> object1 = objectRegistry.OBJECTS_REGISTRY.get(ResourceLocation.parse(object.getString("Location")));
-                TickingObject obj = object1.spawn(life, level, pos);
+                Vec3 pos = NBTHelper.parseTagToVec3(tag.getCompound("pos"));
+                ObjectType<?> objectType = objectRegistry.OBJECTS_REGISTRY.get(ResourceLocation.parse(object.getString("Location")));
+                TickingObject obj = objectType.spawn(life, level, pos);
+                obj.load(object, provider);
                 OBJECTS.put(UUID.fromString(uuid), obj);
             }
         });

@@ -1,7 +1,7 @@
 package io.github.dracosomething.awakened_lib.objects;
 
-import io.github.dracosomething.awakened_lib.library.ObjectType;
-import io.github.dracosomething.awakened_lib.library.TickingObject;
+import io.github.dracosomething.awakened_lib.objects.api.ObjectType;
+import io.github.dracosomething.awakened_lib.objects.api.TickingObject;
 import net.minecraft.core.particles.ParticleTypes;
 
 public class TestObject extends TickingObject {

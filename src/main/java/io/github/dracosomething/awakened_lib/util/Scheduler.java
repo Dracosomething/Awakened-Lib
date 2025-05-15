@@ -1,5 +1,6 @@
-package io.github.dracosomething.awakened_lib.library;
+package io.github.dracosomething.awakened_lib.util;
 
+import io.github.dracosomething.awakened_lib.util.Task;
 import io.github.dracosomething.awakened_lib.util.TimerHelper;
 
 public final class Scheduler implements Runner {
@@ -20,7 +21,11 @@ public final class Scheduler implements Runner {
     }
 
     public void schedule(Task task, long duration, long delay) {
-
+        task.delay = delay;
+        task.duration = duration;
+        task.state = Task.State.SCHEDULED;
+        task.timeElapsed = 0;
+        this.task = task;
     }
 
     public void cancel() {

@@ -14,7 +14,7 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 public class ObjectsHandler {
     @SubscribeEvent
     public static void create(PlayerInteractEvent.LeftClickEmpty event) {
-        objectRegistry.EXAMPLE.get().spawn(100, event.getLevel(), event.getPos());
+        objectRegistry.EXAMPLE.get().spawn(100, event.getLevel(), event.getPos().getCenter());
         System.out.println("Succesfully created new object");
     }
 }

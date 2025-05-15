@@ -1,6 +1,6 @@
 package io.github.dracosomething.awakened_lib.dataAttachements;
 
-import io.github.dracosomething.awakened_lib.library.TickingObject;
+import io.github.dracosomething.awakened_lib.objects.api.TickingObject;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 

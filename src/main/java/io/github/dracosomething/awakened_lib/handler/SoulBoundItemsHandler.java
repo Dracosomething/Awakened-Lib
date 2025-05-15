@@ -7,7 +7,6 @@ import io.github.dracosomething.awakened_lib.helper.EnchantmentHelper;
 import io.github.dracosomething.awakened_lib.library.SoulBoundItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;

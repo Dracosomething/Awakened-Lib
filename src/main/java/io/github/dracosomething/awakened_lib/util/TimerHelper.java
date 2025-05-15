@@ -1,9 +1,7 @@
 package io.github.dracosomething.awakened_lib.util;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
-import io.github.dracosomething.awakened_lib.library.Task;
-import io.github.dracosomething.awakened_lib.library.Runner;
-import net.minecraft.client.Minecraft;
+import io.github.dracosomething.awakened_lib.util.Runner;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
