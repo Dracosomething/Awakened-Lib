@@ -1,15 +1,14 @@
 package io.github.dracosomething.awakened_lib.handler;
 
-import io.github.dracosomething.awakened_lib.capability.ObjectsCapability;
+import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsCapability;
 import io.github.dracosomething.awakened_lib.registry.object.objectRegistry;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class ObjectsHandler {
     @SubscribeEvent
     public static void onJoin(LevelEvent.Load event) {

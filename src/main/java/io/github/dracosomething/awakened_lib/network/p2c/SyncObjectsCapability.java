@@ -1,6 +1,5 @@
 package io.github.dracosomething.awakened_lib.network.p2c;
 
-import io.github.dracosomething.awakened_lib.capability.IObjects;
 import io.github.dracosomething.awakened_lib.network.Packet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;

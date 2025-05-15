@@ -4,13 +4,13 @@ import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.library.Task;
 import io.github.dracosomething.awakened_lib.library.Runner;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.HashMap;
 
-@Mod.EventBusSubscriber(modid = Awakened_lib.MODID)
+@EventBusSubscriber(modid = Awakened_lib.MODID)
 public class TimerHelper {
     private static HashMap<String, Runner> RUNNERS = new HashMap<>();
 
@@ -39,13 +39,8 @@ public class TimerHelper {
     }
 
     @SubscribeEvent
-    public static void RunTimers(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.START) {
-            runTasks();
-        }
-        if (event.phase == TickEvent.Phase.END) {
-            runTasks();
-        }
+    public static void RunTimers(ServerTickEvent event) {
+        runTasks();
     }
 
         private static void runTasks() {

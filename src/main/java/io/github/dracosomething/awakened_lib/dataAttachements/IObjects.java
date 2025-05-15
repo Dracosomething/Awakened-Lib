@@ -1,14 +1,12 @@
-package io.github.dracosomething.awakened_lib.capability;
+package io.github.dracosomething.awakened_lib.dataAttachements;
 
 import io.github.dracosomething.awakened_lib.library.TickingObject;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.capabilities.AutoRegisterCapability;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-@AutoRegisterCapability
 public interface IObjects extends INBTSerializable<CompoundTag> {
     HashMap<UUID, TickingObject> getOBJECTS();
 

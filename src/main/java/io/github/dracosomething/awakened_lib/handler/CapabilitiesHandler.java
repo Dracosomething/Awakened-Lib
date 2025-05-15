@@ -1,11 +1,9 @@
 package io.github.dracosomething.awakened_lib.handler;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
-import io.github.dracosomething.awakened_lib.capability.ObjectsCapability;
-import io.github.dracosomething.awakened_lib.capability.ObjectsProvider;
-import net.minecraft.world.entity.Entity;
+import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsCapability;
+import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsProvider;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.level.LevelEvent;

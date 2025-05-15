@@ -3,18 +3,24 @@ package io.github.dracosomething.awakened_lib.registry.object;
 import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.library.ObjectType;
 import io.github.dracosomething.awakened_lib.objects.TestObject;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.*;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.IRegistryExtension;
+import net.neoforged.neoforge.registries.RegistryBuilder;
 
 import java.util.function.Supplier;
 
 public class objectRegistry {
-    public static final ResourceLocation OBJECTS_KEY = ResourceLocation.fromNamespaceAndPath(Awakened_lib.MODID, "ojects");
+    private static final ResourceLocation OBJECTS_KEY = ResourceLocation.fromNamespaceAndPath(Awakened_lib.MODID, "ojects");
+    public static final ResourceKey<Registry<ObjectType<?>>> KEY = ResourceKey.createRegistryKey(OBJECTS_KEY);
+    public static final Registry<ObjectType<?>> OBJECTS_REGISTRY;
     public static final DeferredRegister<ObjectType<?>> OBJECTS;
-    public static final Supplier<IForgeRegistry<ObjectType<?>>> REGISTRY;
-    public static final RegistryObject<ObjectType<TestObject>> EXAMPLE;
+    public static final DeferredHolder<ObjectType<?>, ObjectType<TestObject>> EXAMPLE;
 
     public static void register(IEventBus bus) {
         OBJECTS.register(bus);
@@ -22,11 +28,10 @@ public class objectRegistry {
 
     static {
         OBJECTS = DeferredRegister.create(OBJECTS_KEY, Awakened_lib.MODID);
-        REGISTRY = OBJECTS.makeRegistry(() -> {
-            RegistryBuilder<ObjectType<?>> builder =new RegistryBuilder<>();
-            builder = builder.hasWrapper();
-            return builder;
-        });
-        EXAMPLE = OBJECTS.register("example", () -> new ObjectType<TestObject>(TestObject::new, new AABB(1, 1, 1, 2, 2, 2)));
+        OBJECTS_REGISTRY = new RegistryBuilder<>(KEY)
+                .sync(true)
+                .defaultKey(ResourceLocation.fromNamespaceAndPath(Awakened_lib.MODID, "example"))
+                .create();
+        EXAMPLE = OBJECTS.register("example", () -> new ObjectType<>(TestObject::new, new AABB(1, 1, 1, 2, 2, 2)));
     }
 }

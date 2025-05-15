@@ -6,6 +6,8 @@ import io.github.dracosomething.awakened_lib.helper.ClassHelper;
 import io.github.dracosomething.awakened_lib.helper.EnchantmentHelper;
 import io.github.dracosomething.awakened_lib.library.SoulBoundItem;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -13,27 +15,26 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Awakened_lib.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = Awakened_lib.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class SoulBoundItemsHandler {
     private static List<Item> SOULBOUNDITEMS = new ArrayList<>();
     private static List<ItemStack> items = new ArrayList<>();
 
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            List<Item> items = ForgeRegistries.ITEMS.getValues().stream().filter((item) -> {
+            List<Item> items = BuiltInRegistries.ITEM.stream().filter((item) -> {
                 return ClassHelper.isAnotatedWith(item.getClass(), SoulBoundItem.class);
             }).toList();
             SoulBoundItemsSetupEvent event1 = new SoulBoundItemsSetupEvent(items);
@@ -91,24 +92,24 @@ public class SoulBoundItemsHandler {
     }
 
     @SubscribeEvent
-    public static void keepItems(TickEvent.PlayerTickEvent event) {
-            event.player.getInventory().items.forEach((item) -> {
+    public static void keepItems(PlayerTickEvent event) {
+            event.getEntity().getInventory().items.forEach((item) -> {
                 if (isSoulBoundItem(item.getItem())) {
                     CustomData data = item.get(DataComponents.CUSTOM_DATA);
                     if (data == null) return;
                     data.update(tag -> {
                         if (!tag.hasUUID("owner")) {
-                            tag.putUUID("owner", event.player.getUUID());
+                            tag.putUUID("owner", event.getEntity().getUUID());
                         }
                     });
                     item.set(DataComponents.CUSTOM_DATA, data);
                     CompoundTag tag = data.copyTag();
-                    if (event.player.getUUID() != tag.getUUID("owner")) {
-                        event.player.level().getServer().getAllLevels().forEach((level) -> {
+                    if (event.getEntity().getUUID() != tag.getUUID("owner")) {
+                        event.getEntity().level().getServer().getAllLevels().forEach((level) -> {
                             Entity entity = level.getEntity(tag.getUUID("owner"));
                             if (entity instanceof Player player) {
                                 player.getInventory().add(item);
-                                event.player.getInventory().removeItem(item);
+                                event.getEntity().getInventory().removeItem(item);
                             }
                         });
                     }

@@ -1,7 +1,7 @@
 package io.github.dracosomething.awakened_lib.library;
 
 import io.github.dracosomething.awakened_lib.api.ObjectsAPI;
-import io.github.dracosomething.awakened_lib.capability.ObjectsCapability;
+import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsCapability;
 import io.github.dracosomething.awakened_lib.events.ObjectEvent;
 import io.github.dracosomething.awakened_lib.helper.NBTHelper;
 import net.minecraft.core.BlockPos;
@@ -18,7 +18,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -64,7 +64,7 @@ public abstract class TickingObject implements Clearable {
 
     public final void place() {
         ObjectEvent.ObjectPlaceEvent event = new ObjectEvent.ObjectPlaceEvent(this, this.pos, this.life);
-        if (!MinecraftForge.EVENT_BUS.post(event)) {
+        if (!NeoForge.EVENT_BUS.post(event)) {
             this.pos = event.getPos();
             this.life = event.getLife();
             ObjectsCapability.addObject(this.uuid, this, this.level);
@@ -81,10 +81,10 @@ public abstract class TickingObject implements Clearable {
 
     public final void tick() {
         ObjectEvent.ObjectTickEvent event = new ObjectEvent.ObjectTickEvent(this);
-        if (!MinecraftForge.EVENT_BUS.post(event)) {
+        if (!NeoForge.EVENT_BUS.post(event)) {
             if (this.life <= 0) {
                 ObjectEvent.ObjectRemoveEvent remove = new ObjectEvent.ObjectRemoveEvent(this);
-                if (!MinecraftForge.EVENT_BUS.post(remove)) {
+                if (!NeoForge.EVENT_BUS.post(remove)) {
                     onRemove();
                     this.clearContent();
                 }

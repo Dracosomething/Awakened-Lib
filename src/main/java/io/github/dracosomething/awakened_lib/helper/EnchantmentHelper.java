@@ -13,7 +13,7 @@ public class EnchantmentHelper {
     public static ItemStack RemoveEnchantments(ItemStack itemStack, Enchantment toClear) {
         net.minecraft.world.item.enchantment.EnchantmentHelper.updateEnchantments(itemStack, (enchantments) -> {
             enchantments.removeIf((enchantment) -> {
-                return enchantment.get().equals(toClear);
+                return enchantment.value().equals(toClear);
             });
         });
 
