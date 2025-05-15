@@ -42,6 +42,7 @@ public abstract class TickingObject implements Clearable {
     private AABB boundingBox;
     private Vec3 pos;
     private UUID uuid;
+    private boolean placed;
 
     public TickingObject(ObjectType<?> type) {
         this.type = type;
@@ -51,6 +52,7 @@ public abstract class TickingObject implements Clearable {
         this.ticker = new Timer(this.uuid.toString());
         System.out.println("Created new TickingObject instance");
         System.out.println(this.random);
+        this.placed = false;
     }
 
     public abstract void onPlace();
@@ -68,15 +70,19 @@ public abstract class TickingObject implements Clearable {
         this.pos = null;
         this.ticker = null;
         this.random = null;
+        this.placed = true;
     }
 
     public final void place() {
         ObjectEvent.ObjectPlaceEvent event = new ObjectEvent.ObjectPlaceEvent(this, this.pos, this.life);
         if (!NeoForge.EVENT_BUS.post(event).isCanceled()) {
+            this.placed = true;
             this.pos = event.getPos();
             this.life = event.getLife();
             ObjectsAttachement.addObject(this.uuid, this, this.getChunk());
-            onPlace();
+            if (!this.placed) {
+                onPlace();
+            }
             Task tick = new Task() {
                 @Override
                 public void run() {
@@ -169,6 +175,10 @@ public abstract class TickingObject implements Clearable {
 
     public BlockPos blockPosition() {
         return new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ());
+    }
+
+    public Vec3 getPos() {
+        return pos;
     }
 
     public boolean shouldBeSaved() {
@@ -304,6 +314,7 @@ public abstract class TickingObject implements Clearable {
         tag.putUUID("UUID", this.uuid);
         CompoundTag key = NBTHelper.parseResourceKey(this.level.dimension());
         tag.put("level", key);
+        tag.putBoolean("placed", this.placed);
         this.addAdditionalSaveData(tag);
         return tag;
     }
@@ -327,6 +338,7 @@ public abstract class TickingObject implements Clearable {
         } else {
             this.uuid = UUID.randomUUID();
         }
+        this.placed = tag.getBoolean("placed");
         CompoundTag locationTag = tag.getCompound("level").getCompound("location");
         ResourceLocation location = NBTHelper.parseTagToLocation(locationTag);
         ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, location);

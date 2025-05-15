@@ -35,6 +35,10 @@ public abstract class ProjectileObject extends TickingObject {
         this.place();
     }
 
+    public void shoot(Vec3 target, float velocity, float inaccuracy) {
+        this.shoot(target.x, target.y, target.z, velocity, inaccuracy);
+    }
+
     public void setDeltaMovement(Vec3 deltaMovement) {
         this.deltaMovement = deltaMovement;
     }

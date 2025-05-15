@@ -6,6 +6,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 
 @EventBusSubscriber(modid = Awakened_lib.MODID)
@@ -48,8 +49,12 @@ public class TimerHelper {
 
     private static void runTasks() {
         if (RUNNERS.isEmpty()) return;
-        for (Runner runner : RUNNERS.values()) {
-            runner.runTasks();
+        try {
+            for (Runner runner : RUNNERS.values()) {
+                runner.runTasks();
+            }
+        } catch (ConcurrentModificationException e) {
+            Awakened_lib.getLOGGER().error(e.getMessage());
         }
     }
 }

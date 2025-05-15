@@ -1,8 +1,10 @@
 package io.github.dracosomething.awakened_lib.registry.object;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
+import io.github.dracosomething.awakened_lib.objects.TestProjectile;
 import io.github.dracosomething.awakened_lib.objects.api.ObjectType;
 import io.github.dracosomething.awakened_lib.objects.TestObject;
+import io.github.dracosomething.awakened_lib.objects.api.ProjectileObject;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -18,6 +20,7 @@ public class objectRegistry {
     public static final Registry<ObjectType<?>> OBJECTS_REGISTRY;
     public static final DeferredRegister<ObjectType<?>> OBJECTS;
     public static final DeferredHolder<ObjectType<?>, ObjectType<TestObject>> EXAMPLE;
+    public static final DeferredHolder<ObjectType<?>, ObjectType<TestProjectile>> EXAMPLE_PROJECTILE;
 
     public static void register(IEventBus bus) {
         OBJECTS.register(bus);
@@ -30,5 +33,6 @@ public class objectRegistry {
                 .defaultKey(ResourceLocation.fromNamespaceAndPath(Awakened_lib.MODID, "example"))
                 .create();
         EXAMPLE = OBJECTS.register("example", () -> new ObjectType<>(TestObject::new, new AABB(1, 1, 1, 2, 2, 2)));
+        EXAMPLE_PROJECTILE = OBJECTS.register("projectile", () -> new ObjectType<>(TestProjectile::new, new AABB(1, 1, 1, 2, 3, 2)));
     }
 }
