@@ -3,6 +3,7 @@ package io.github.dracosomething.awakened_lib.objects;
 import io.github.dracosomething.awakened_lib.objects.api.ObjectType;
 import io.github.dracosomething.awakened_lib.objects.api.TickingObject;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 
 public class TestObject extends TickingObject {
     public TestObject(ObjectType<? extends TestObject> type) {
@@ -14,6 +15,7 @@ public class TestObject extends TickingObject {
     }
 
     public void onTick() {
+        System.out.println(this.getLevel() instanceof ServerLevel);
         this.addParticlesOnPos(ParticleTypes.CAMPFIRE_COSY_SMOKE, 0.5);
     }
 

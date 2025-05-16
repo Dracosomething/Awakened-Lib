@@ -27,6 +27,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -109,6 +110,7 @@ public abstract class TickingObject implements Clearable {
     }
 
     public List<Entity> getCollidingEntities() {
+        if (this.level == null) return new ArrayList<>();
         return this.level.getEntitiesOfClass(Entity.class, this.boundingBox, (this::isCollidingWith));
     }
 
@@ -202,6 +204,7 @@ public abstract class TickingObject implements Clearable {
     }
 
     public final double getX() {
+        if (this.pos == null) return 0;
         return this.pos.x();
     }
 
@@ -215,6 +218,7 @@ public abstract class TickingObject implements Clearable {
     }
 
     public final double getY() {
+        if (this.pos == null) return 0;
         return this.pos.y();
     }
 
@@ -228,6 +232,7 @@ public abstract class TickingObject implements Clearable {
     }
 
     public final double getZ() {
+        if (this.pos == null) return 0;
         return this.pos.z();
     }
 
