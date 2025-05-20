@@ -98,6 +98,10 @@ public abstract class ProjectileObject extends TickingObject {
             }
         } else {
             this.setDeltaMovement(Vec3.ZERO);
+            if (!this.getLevel().getBlockState(this.blockPosition().above()).isAir()) {
+                double y = this.getY();
+                this.setPos(this.getX(), ++y, this.getZ());
+            }
         }
     }
 

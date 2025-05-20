@@ -25,24 +25,45 @@ public class AwakenedNetwork {
             switch (origin) {
                 case PLAY: {
                     switch (packet.side()) {
-                        case CLIENT -> payloadRegistrar.playToClient(packet.type(), packet.codec(), packet.handler());
-                        case COMMON -> payloadRegistrar.playBidirectional(packet.type(), packet.codec(), packet.handler());
-                        case SERVER -> payloadRegistrar.playToServer(packet.type(), packet.codec(), packet.handler());
+                        case CLIENT:
+                            payloadRegistrar.playToClient(packet.type(), packet.codec(), packet.handler());
+                            break;
+                        case COMMON:
+                            payloadRegistrar.playBidirectional(packet.type(), packet.codec(), packet.handler());
+                            break;
+                        case SERVER:
+                            payloadRegistrar.playToServer(packet.type(), packet.codec(), packet.handler());
+                            break;
                     }
+                    break;
                 }
                 case COMMON: {
                     switch (packet.side()) {
-                        case CLIENT -> payloadRegistrar.commonToClient(packet.type(), packet.codec(), packet.handler());
-                        case COMMON -> payloadRegistrar.commonBidirectional(packet.type(), packet.codec(), packet.handler());
-                        case SERVER -> payloadRegistrar.commonToServer(packet.type(), packet.codec(), packet.handler());
+                        case CLIENT:
+                            payloadRegistrar.commonToClient(packet.type(), packet.codec(), packet.handler());
+                            break;
+                        case COMMON:
+                            payloadRegistrar.commonBidirectional(packet.type(), packet.codec(), packet.handler());
+                            break;
+                        case SERVER:
+                            payloadRegistrar.commonToServer(packet.type(), packet.codec(), packet.handler());
+                            break;
                     }
+                    break;
                 }
                 case CONFIG: {
                     switch (packet.side()) {
-                        case CLIENT -> payloadRegistrar.configurationToClient(packet.type(), packet.codec(), packet.handler());
-                        case COMMON -> payloadRegistrar.configurationBidirectional(packet.type(), packet.codec(), packet.handler());
-                        case SERVER -> payloadRegistrar.configurationToServer(packet.type(), packet.codec(), packet.handler());
+                        case CLIENT:
+                            payloadRegistrar.configurationToClient(packet.type(), packet.codec(), packet.handler());
+                            break;
+                        case COMMON:
+                            payloadRegistrar.configurationBidirectional(packet.type(), packet.codec(), packet.handler());
+                            break;
+                        case SERVER:
+                            payloadRegistrar.configurationToServer(packet.type(), packet.codec(), packet.handler());
+                            break;
                     }
+                    break;
                 }
             }
         });

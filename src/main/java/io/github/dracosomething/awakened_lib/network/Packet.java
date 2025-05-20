@@ -13,6 +13,6 @@ public record Packet<T extends CustomPacketPayload>(
     Side side
 ) implements CustomPacketPayload {
     public @NotNull Type<T> type() {
-        return this.type();
+        return this.type;
     }
 }

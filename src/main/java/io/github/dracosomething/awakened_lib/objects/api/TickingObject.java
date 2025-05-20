@@ -23,6 +23,7 @@ import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -56,8 +57,6 @@ public abstract class TickingObject implements Clearable {
         this.id = counter.incrementAndGet();
         this.uuid = UUID.randomUUID();
         this.ticker = new Timer(this.uuid.toString());
-        System.out.println("Created new TickingObject instance");
-        System.out.println(this.random);
         this.placed = false;
     }
 
@@ -397,7 +396,9 @@ public abstract class TickingObject implements Clearable {
             listTag.add(DoubleTag.valueOf(this.boundingBox.maxZ));
             tag.put("hitbox", listTag);
         }
-        tag.put("pos", NBTHelper.parseVec3(this.pos));
+        if (this.pos != null) {
+            tag.put("pos", NBTHelper.parseVec3(this.pos));
+        }
         tag.putUUID("UUID", this.uuid);
         CompoundTag key = NBTHelper.parseResourceKey(this.level.dimension());
         tag.put("level", key);
@@ -415,7 +416,7 @@ public abstract class TickingObject implements Clearable {
         return tag;
     }
 
-    public void load(CompoundTag tag, HolderLookup.Provider provider) {
+    public void load(CompoundTag tag, ChunkAccess chunkAccess) {
         this.life = tag.getInt("life");
         this.id = tag.getInt("id");
         ListTag listTag = tag.getList("hitbox", 6);
@@ -435,11 +436,7 @@ public abstract class TickingObject implements Clearable {
             this.uuid = UUID.randomUUID();
         }
         this.placed = tag.getBoolean("placed");
-        CompoundTag locationTag = tag.getCompound("level").getCompound("location");
-        ResourceLocation location = NBTHelper.parseTagToLocation(locationTag);
-        ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, location);
-        Level level = provider.lookupOrThrow(Registries.DIMENSION).getOrThrow(key).value();
-        this.level = level;
+        this.level = chunkAccess.getLevel();
         CompoundTag deltaMovement = tag.getCompound("deltaMovement");
         double x = deltaMovement.getDouble("x");
         double y = deltaMovement.getDouble("y");
