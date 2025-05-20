@@ -7,6 +7,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 
 import javax.annotation.Nullable;
 
@@ -15,5 +16,10 @@ public class CapabilitiesHandler {
     @SubscribeEvent
     public static void registerLevelCaps(ChunkEvent.Load event) {
         event.getChunk().getData(DataAttachmentRegistry.OBJECTS);
+    }
+
+    @SubscribeEvent
+    public static void watchChunk(ChunkWatchEvent.Sent event) {
+
     }
 }

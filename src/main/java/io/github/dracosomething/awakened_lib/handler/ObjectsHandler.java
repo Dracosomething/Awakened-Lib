@@ -22,9 +22,8 @@ public class ObjectsHandler {
 
     @SubscribeEvent
     public static void fireProjectile(PlayerInteractEvent.LeftClickEmpty event) {
-        Vec3 pos = event.getPos().getCenter();
         Vec2 rot = event.getEntity().getRotationVector();
         TestProjectile projectile = objectRegistry.EXAMPLE_PROJECTILE.get().create(1000, event.getLevel(), event.getPos().getCenter());
-        projectile.shootFromRotation((float) rot.x, (float) rot.y + event.getEntity().getYHeadRot(), (float) 0.0F, 1, 0.1F);
+        projectile.shootFromRotation((float) rot.x, (float) rot.y, (float) 0.0F, 1, 0.1F);
     }
 }

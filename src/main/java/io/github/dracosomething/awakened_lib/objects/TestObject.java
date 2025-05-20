@@ -15,11 +15,15 @@ public class TestObject extends TickingObject {
     }
 
     public void onTick() {
-        System.out.println(this.getLevel() instanceof ServerLevel);
         this.addParticlesOnPos(ParticleTypes.CAMPFIRE_COSY_SMOKE, 0.5);
     }
 
     public void onRemove() {
         this.addParticlesOnPos(ParticleTypes.EGG_CRACK, 0.5);
+    }
+
+    @Override
+    public void onCollideBlock() {
+
     }
 }

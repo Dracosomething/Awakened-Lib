@@ -55,4 +55,17 @@ public class ObjectEvent extends Event {
             super(object);
         }
     }
+
+    public static class GravityTickEvent extends ObjectTickEvent {
+        private double gravity;
+
+        public GravityTickEvent(TickingObject object, double gravity) {
+            super(object);
+            this.gravity = gravity;
+        }
+
+        public double getGravity() {
+            return gravity;
+        }
+    }
 }

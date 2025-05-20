@@ -3,11 +3,15 @@ package io.github.dracosomething.awakened_lib;
 import com.mojang.logging.LogUtils;
 import io.github.dracosomething.awakened_lib.handler.SoulBoundItemsHandler;
 import io.github.dracosomething.awakened_lib.registry.mainRegistry;
+import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
+
+import java.util.Arrays;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Awakened_lib.MODID)

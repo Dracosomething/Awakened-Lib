@@ -1,6 +1,6 @@
 package io.github.dracosomething.awakened_lib.objects.api;
 
-import io.github.dracosomething.awakened_lib.api.ObjectsAPI;
+import io.github.dracosomething.awakened_lib.api.object.ObjectsAPI;
 import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsAttachement;
 import io.github.dracosomething.awakened_lib.events.ObjectEvent;
 import io.github.dracosomething.awakened_lib.helper.NBTHelper;
@@ -22,9 +22,11 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.ArrayList;
@@ -42,7 +44,10 @@ public abstract class TickingObject implements Clearable {
     private Level level;
     private AABB boundingBox;
     private Vec3 pos;
+    private Vec3 deltaMovement;
     private UUID uuid;
+    private boolean physics;
+    private double gravity;
     private boolean placed;
 
     public TickingObject(ObjectType<?> type) {
@@ -62,6 +67,8 @@ public abstract class TickingObject implements Clearable {
 
     public abstract void onRemove();
 
+    public abstract void onCollideBlock();
+
     public void clearContent() {
         ObjectsAttachement.removeObject(this.uuid, this, this.getChunk());
         this.ticker.cancel();
@@ -77,12 +84,12 @@ public abstract class TickingObject implements Clearable {
     public final void place() {
         ObjectEvent.ObjectPlaceEvent event = new ObjectEvent.ObjectPlaceEvent(this, this.pos, this.life);
         if (!NeoForge.EVENT_BUS.post(event).isCanceled()) {
-            this.placed = true;
             this.pos = event.getPos();
             this.life = event.getLife();
             ObjectsAttachement.addObject(this.uuid, this, this.getChunk());
             if (!this.placed) {
                 onPlace();
+                this.placed = true;
             }
             Task tick = new Task() {
                 @Override
@@ -104,14 +111,34 @@ public abstract class TickingObject implements Clearable {
                     this.clearContent();
                 }
             }
+            if (this.isPhysics()) {
+                this.gravityTick();
+            }
             this.onTick();
             --this.life;
         }
     }
 
-    public List<Entity> getCollidingEntities() {
-        if (this.level == null) return new ArrayList<>();
-        return this.level.getEntitiesOfClass(Entity.class, this.boundingBox, (this::isCollidingWith));
+    public final void gravityTick() {
+        ObjectEvent.GravityTickEvent event = new ObjectEvent.GravityTickEvent(this, this.getGravity());
+        if (!NeoForge.EVENT_BUS.post(event).isCanceled()) {
+            if (!this.isCollidingGround()) {
+                Vec3 vec3 = this.getDeltaMovement();
+                double x = vec3.x;
+                double y = vec3.y;
+                double z = vec3.z;
+
+                double dX = this.getX() + x;
+                double dY = this.getY() + y;
+                double dZ = this.getZ() + z;
+
+                this.setDeltaMovement(this.deltaMovement.add(0.0, -this.gravity, 0.0));
+
+                this.setPos(dX, dY, dZ);
+            } else {
+                this.onCollideBlock();
+            }
+        }
     }
 
     public boolean isCollidingWith(Entity entity) {
@@ -119,6 +146,79 @@ public abstract class TickingObject implements Clearable {
                 this.boundingBox.contains(entity.position()) &&
                 entity.getBoundingBox().intersects(this.boundingBox) &&
                 this.boundingBox.intersects(entity.getBoundingBox());
+    }
+
+    public boolean isCollidingGround() {
+        boolean returnVal = false;
+        if (this.level != null) {
+            BlockPos blockpos = this.blockPosition();
+            BlockState blockstate = this.level.getBlockState(blockpos);
+            if (!blockstate.isAir()) {
+                VoxelShape voxelshape = blockstate.getCollisionShape(this.level, blockpos);
+                if (!voxelshape.isEmpty()) {
+                    Vec3 vec31 = this.getPos();
+
+                    for (AABB aabb : voxelshape.toAabbs()) {
+                        if (aabb.move(blockpos).contains(vec31)) {
+                            returnVal = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return returnVal;
+    }
+
+    public boolean isCollidingWith(TickingObject object) {
+        return this.boundingBox.intersects(object.boundingBox) && this.boundingBox.contains(this.pos);
+    }
+
+    public List<TickingObject> getCollidingObjects() {
+        return this.getChunk().getData(DataAttachmentRegistry.OBJECTS.get()).getOBJECTS().values().stream().filter((object) -> {
+            return object.isCollidingWith(this) && this.isCollidingWith(object);
+        }).toList();
+    }
+
+    public List<Entity> getCollidingEntities() {
+        if (this.level == null) return new ArrayList<>();
+        return this.level.getEntitiesOfClass(Entity.class, this.boundingBox, (this::isCollidingWith));
+    }
+
+    public void setDeltaMovement(Vec3 deltaMovement) {
+        this.deltaMovement = deltaMovement;
+    }
+
+    public Vec3 getDeltaMovement() {
+        return deltaMovement;
+    }
+
+    public double getDeltaX() {
+        return this.deltaMovement.x;
+    }
+
+    public double getDeltaY() {
+        return this.deltaMovement.y;
+    }
+
+    public double getDeltaZ() {
+        return this.deltaMovement.z;
+    }
+
+    public void setGravity(double gravity) {
+        this.gravity = gravity;
+    }
+
+    public double getGravity() {
+        return gravity;
+    }
+
+    public boolean isPhysics() {
+        return physics;
+    }
+
+    public void setPhysics(boolean physics) {
+        this.physics = physics;
     }
 
     protected RandomSource getRandom() {
@@ -141,22 +241,21 @@ public abstract class TickingObject implements Clearable {
         this.pos = new Vec3(x, y, z);
     }
 
+    public void moveTo(Vec3 movement) {
+        double x = movement.x;
+        double y = movement.y;
+        double z = movement.z;
+        double d0 = Mth.clamp(x, -3.0E7, 3.0E7);
+        double d1 = Mth.clamp(z, -3.0E7, 3.0E7);
+        this.setPos(d0, y, d1);
+    }
+
     public void setLevel(Level level) {
         this.level = level;
     }
 
     public void setBoundingBox(AABB boundingBox) {
         this.boundingBox = boundingBox;
-    }
-
-    public boolean isCollidingWith(TickingObject object) {
-        return this.boundingBox.intersects(object.boundingBox) && this.boundingBox.contains(this.pos);
-    }
-
-    public List<TickingObject> getCollidingObjects() {
-        return this.getChunk().getData(DataAttachmentRegistry.OBJECTS.get()).getOBJECTS().values().stream().filter((object) -> {
-           return object.isCollidingWith(this) && this.isCollidingWith(object);
-        }).toList();
     }
 
     public Level getLevel() {
@@ -181,14 +280,6 @@ public abstract class TickingObject implements Clearable {
 
     public Vec3 getPos() {
         return pos;
-    }
-
-    public boolean shouldBeSaved() {
-        return true;
-    }
-
-    public boolean isAlwaysTicking() {
-        return true;
     }
 
     public final double getBbHeight() {
@@ -275,12 +366,12 @@ public abstract class TickingObject implements Clearable {
         double y1 = this.boundingBox.maxY * this.random.nextDouble();
         double z0 = this.boundingBox.minZ * (2.0 * this.random.nextDouble() - 1.0) * randomScale;
         double z1 = this.boundingBox.maxZ * (2.0 * this.random.nextDouble() - 1.0) * randomScale;
+        this.level.addParticle(particles, x0, y0, z0, d0, d1, d2);
+        this.level.addParticle(particles, x1, y1, z1, d3, d4, d5);
         if (this.level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(particles, x0, y0, z0, 1, d0, d1, d2, 0.1);
             serverLevel.sendParticles(particles, x1, y1, z1, 1, d3, d4, d5, 0.1);
         }
-        this.level.addParticle(particles, x0, y0, z0, d0, d1, d2);
-        this.level.addParticle(particles, x1, y1, z1, d3, d4, d5);
     }
 
     public void addAdditionalSaveData(CompoundTag tag) {
@@ -289,15 +380,6 @@ public abstract class TickingObject implements Clearable {
 
     public void readAdditionalSaveData(CompoundTag tag) {
 
-    }
-
-    public void moveTo(Vec3 movement) {
-        double x = movement.x;
-        double y = movement.y;
-        double z = movement.z;
-        double d0 = Mth.clamp(x, -3.0E7, 3.0E7);
-        double d1 = Mth.clamp(z, -3.0E7, 3.0E7);
-        this.setPos(d0, y, d1);
     }
 
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
@@ -320,6 +402,15 @@ public abstract class TickingObject implements Clearable {
         CompoundTag key = NBTHelper.parseResourceKey(this.level.dimension());
         tag.put("level", key);
         tag.putBoolean("placed", this.placed);
+        tag.putDouble("gravity", this.gravity);
+        tag.putBoolean("physics", this.physics);
+        if (this.deltaMovement != null) {
+            CompoundTag deltaMovement = new CompoundTag();
+            deltaMovement.putDouble("x", this.getDeltaX());
+            deltaMovement.putDouble("y", this.getDeltaY());
+            deltaMovement.putDouble("z", this.getDeltaZ());
+            tag.put("deltaMovement", deltaMovement);
+        }
         this.addAdditionalSaveData(tag);
         return tag;
     }
@@ -349,6 +440,13 @@ public abstract class TickingObject implements Clearable {
         ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, location);
         Level level = provider.lookupOrThrow(Registries.DIMENSION).getOrThrow(key).value();
         this.level = level;
+        CompoundTag deltaMovement = tag.getCompound("deltaMovement");
+        double x = deltaMovement.getDouble("x");
+        double y = deltaMovement.getDouble("y");
+        double z = deltaMovement.getDouble("z");
+        this.deltaMovement = new Vec3(x, y, z);
+        this.gravity = tag.getDouble("gravity");
+        this.physics = tag.getBoolean("physics");
         this.readAdditionalSaveData(tag);
     }
 }

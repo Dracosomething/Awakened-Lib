@@ -1,4 +1,4 @@
-package io.github.dracosomething.awakened_lib.api;
+package io.github.dracosomething.awakened_lib.api.object;
 
 import io.github.dracosomething.awakened_lib.objects.api.ObjectType;
 import io.github.dracosomething.awakened_lib.registry.object.objectRegistry;

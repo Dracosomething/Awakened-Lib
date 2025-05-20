@@ -16,7 +16,8 @@ public class TestProjectile extends ProjectileObject {
 
     @Override
     public void onPlace() {
-
+        this.setPhysics(true);
+        this.setGravity(0.10);
     }
 
     @Override
@@ -31,6 +32,16 @@ public class TestProjectile extends ProjectileObject {
 
     @Override
     public void onFiredTick() {
+        this.addParticlesOnPos(ParticleTypes.FLAME, 0.5);
+    }
+
+    @Override
+    public void onCollideBlock() {
+        this.addParticlesOnPos(ParticleTypes.FLASH, 0.2);
+    }
+
+    @Override
+    public void onDefaultTick() {
         this.addParticlesOnPos(ParticleTypes.CAMPFIRE_COSY_SMOKE, 0.5);
     }
 }

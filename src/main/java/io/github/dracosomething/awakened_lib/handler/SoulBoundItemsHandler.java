@@ -7,6 +7,7 @@ import io.github.dracosomething.awakened_lib.helper.EnchantmentHelper;
 import io.github.dracosomething.awakened_lib.library.SoulBoundItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -22,8 +23,12 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @EventBusSubscriber(modid = Awakened_lib.MODID, bus = EventBusSubscriber.Bus.GAME)
@@ -34,7 +39,7 @@ public class SoulBoundItemsHandler {
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             List<Item> items = BuiltInRegistries.ITEM.stream().filter((item) -> {
-                return ClassHelper.isAnotatedWith(item.getClass(), SoulBoundItem.class);
+                return ClassHelper.isAnotatedWith(item.getClass(), SoulBoundItem.class) && item !=  Items.AIR;
             }).toList();
             SoulBoundItemsSetupEvent event1 = new SoulBoundItemsSetupEvent(items);
             items = event1.getItems();
@@ -46,12 +51,17 @@ public class SoulBoundItemsHandler {
         return SOULBOUNDITEMS.contains(item) && item != Items.AIR;
     }
 
+    private static SoulBoundItem getAnotation(Class<?> obj) {
+        return ClassHelper.getAnotation(obj, SoulBoundItem.class);
+    }
+
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof Player player) {
             player.getInventory().items.forEach((item) -> {
                 if (ClassHelper.isAnotatedWith(item.getItem().getClass(), SoulBoundItem.class)) {
-                    SoulBoundItem itemData = (SoulBoundItem) item.getItem();
+                    SoulBoundItem itemData = getAnotation(item.getItem().getClass());
+                    if (itemData == null) return;
                     if (item.getDamageValue() >= itemData.minimumDurability() &&
                             player.experienceLevel >= itemData.getXPRequirement()) {
                         item.setDamageValue(item.getDamageValue() - itemData.getDurabilityCost());
@@ -72,7 +82,8 @@ public class SoulBoundItemsHandler {
         items.forEach((item) -> {
             boolean bool = true;
             if (ClassHelper.isAnotatedWith(item.getItem().getClass(), SoulBoundItem.class)) {
-                SoulBoundItem itemData = (SoulBoundItem) item.getItem();
+                SoulBoundItem itemData = getAnotation(item.getClass());
+                if (itemData == null) return;
                 bool = itemData.keepsEnchantments();
             }
             if (!bool) {
@@ -88,7 +99,8 @@ public class SoulBoundItemsHandler {
             Item item = event.getEntity().getItem().getItem();
             boolean bool = false;
             if (ClassHelper.isAnotatedWith(item.getClass(), SoulBoundItem.class)) {
-                SoulBoundItem itemData = (SoulBoundItem) event.getEntity().getItem().getItem();
+                SoulBoundItem itemData = getAnotation(item.getClass());
+                if (itemData == null) return;
                 bool = itemData.canBeDropped();
             }
             if (!bool) {
