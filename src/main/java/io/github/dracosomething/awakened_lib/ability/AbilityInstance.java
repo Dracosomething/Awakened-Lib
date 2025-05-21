@@ -19,6 +19,10 @@ public class AbilityInstance {
         this.ability = ability;
     }
 
+    public Ability getAbility() {
+        return ability;
+    }
+
     public ResourceLocation getSkillId() {
         return AbilityAPI.getRegistry().getKey(this.ability);
     }
@@ -81,5 +85,17 @@ public class AbilityInstance {
         clone.dirty = this.dirty;
         clone.serialize(this.toNBT());
         return clone;
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void setDirty() {
+        this.dirty = true;
+    }
+
+    public void resetDirty() {
+        this.dirty = false;
     }
 }
