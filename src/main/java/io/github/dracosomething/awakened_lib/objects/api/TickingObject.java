@@ -36,7 +36,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class TickingObject implements Clearable {
-    private AtomicInteger counter = new AtomicInteger();
+    private final AtomicInteger counter = new AtomicInteger();
     private final ObjectType<?> type;
     private Timer ticker;
     private RandomSource random;
