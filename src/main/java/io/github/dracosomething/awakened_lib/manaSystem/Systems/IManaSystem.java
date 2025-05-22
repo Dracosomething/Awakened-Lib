@@ -7,4 +7,8 @@ public interface IManaSystem {
     double getMax();
 
     double getRegen();
+
+    String getName();
+
+    RegenOn getRegenerator();
 }

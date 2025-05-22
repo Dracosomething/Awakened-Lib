@@ -15,7 +15,7 @@ public class ManaManager {
     private final HashMap<String, ManaSystem> SYSTEMS = new HashMap<>();
 
     public void start(ManaSystemSetupEvent event) {
-        SYSTEMS.putAll(event.getSystems());
+        SYSTEMS.putAll(event.getManager().SYSTEMS);
     }
     
     public ManaSystem get(String id) {

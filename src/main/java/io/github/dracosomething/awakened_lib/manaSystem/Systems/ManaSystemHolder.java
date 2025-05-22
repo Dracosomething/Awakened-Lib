@@ -1,13 +1,13 @@
 package io.github.dracosomething.awakened_lib.manaSystem.Systems;
 
 public class ManaSystemHolder {
-    private ManaSystem system;
+    private IManaSystem system;
 
-    public <T extends ManaSystem> ManaSystemHolder(T system) {
+    public <T extends IManaSystem> ManaSystemHolder(T system) {
         this.system = system;
     }
 
-    public ManaSystem getSystem() {
+    public IManaSystem getSystem() {
         return system;
     }
 }

@@ -16,15 +16,9 @@ import java.util.Map;
 
 @EventBusSubscriber(modid = Awakened_lib.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class StartUpHandler {
-    private static ManaManager MANAGER;
-    private static final Map<String, ManaSystem> SYSTEMS = new HashMap<>();
-
-    public static void registerSystem(String id, ManaSystem system) {
-        SYSTEMS.put(id, system);
-    }
+    private static ManaManager MANAGER = new ManaManager();
 
     public static ManaManager getMANAGER() {
-        if (MANAGER == null) return new ManaManager();
         return MANAGER;
     }
 
@@ -32,12 +26,30 @@ public class StartUpHandler {
     public static void startUp(FMLConstructModEvent event) {
         event.enqueueWork(() -> {
             ManaSystemGatherEvent event2 = new ManaSystemGatherEvent();
-            event2.getSystems().forEach(StartUpHandler::registerSystem);
-            ManaSystemSetupEvent event1 = new ManaSystemSetupEvent(SYSTEMS);
+            NeoForge.EVENT_BUS.post(event2);
+            event2.getSystems().forEach(getMANAGER()::registerSystem);
+            ManaSystemSetupEvent event1 = new ManaSystemSetupEvent(MANAGER);
             NeoForge.EVENT_BUS.post(event1);
-            ManaManager manager = new ManaManager();
-            manager.start(event1);
-            MANAGER = manager;
+            MANAGER.start(event1);
         });
+    }
+
+    @SubscribeEvent
+    public static void reloadClientStartup(FMLClientSetupEvent event) {
+        event.enqueueWork(StartUpHandler::reload);
+    }
+
+    @SubscribeEvent
+    public static void reloadClientStartup(FMLCommonSetupEvent event) {
+        event.enqueueWork(StartUpHandler::reload);
+    }
+
+    private static void reload() {
+        ManaSystemGatherEvent event2 = new ManaSystemGatherEvent();
+        NeoForge.EVENT_BUS.post(event2);
+        event2.getSystems().forEach(getMANAGER()::registerSystem);
+        ManaSystemSetupEvent event1 = new ManaSystemSetupEvent(MANAGER);
+        NeoForge.EVENT_BUS.post(event1);
+        MANAGER.start(event1);
     }
 }

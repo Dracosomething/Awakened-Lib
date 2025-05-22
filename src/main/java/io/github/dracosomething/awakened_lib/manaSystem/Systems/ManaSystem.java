@@ -1,32 +1,33 @@
 package io.github.dracosomething.awakened_lib.manaSystem.Systems;
 
 import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import org.jetbrains.annotations.UnknownNullability;
 
 public class ManaSystem implements IManaSystem {
     private final String name;
     private final double max;
     private final double regen;
+    private final RegenOn on;
 
-    public ManaSystem(String name, double max, double regen) {
+    public ManaSystem(String name, double max, double regen, RegenOn on) {
         this.name = name;
         this.max = max;
         this.regen = regen;
-        StartUpHandler.registerSystem(this.name, this);
+        this.on = on;
+        StartUpHandler.getMANAGER().registerSystem(this.name, this);
     }
 
     public String getName() {
         return name;
     }
 
-    @Override
+    public RegenOn getRegenerator() {
+        return this.on;
+    }
+
     public double getMax() {
         return this.max;
     }
 
-    @Override
     public double getRegen() {
         return this.regen;
     }
