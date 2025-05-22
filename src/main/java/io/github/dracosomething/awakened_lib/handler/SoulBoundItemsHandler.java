@@ -136,4 +136,9 @@ public class SoulBoundItemsHandler {
             }
         });
     }
+
+    @SubscribeEvent
+    public static void initSoulBoundItems(SoulBoundItemsSetupEvent event) {
+        event.addItem(Items.DIAMOND_SWORD);
+    }
 }

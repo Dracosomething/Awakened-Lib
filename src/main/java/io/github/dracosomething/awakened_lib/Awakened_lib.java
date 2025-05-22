@@ -18,15 +18,21 @@ import java.util.Arrays;
 public class Awakened_lib {
     public static final String MODID = "awakened_lib";
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static ModContainer container;
 
     public Awakened_lib(IEventBus modEventBus, ModContainer modContainer) {
         mainRegistry.register(modEventBus);
 
         modEventBus.addListener(SoulBoundItemsHandler::onClientSetup);
 //        NeoForge.EVENT_BUS.register(this);
+        container = modContainer;
     }
 
     public static Logger getLOGGER() {
         return LOGGER;
+    }
+
+    public static ModContainer getContainer() {
+        return container;
     }
 }

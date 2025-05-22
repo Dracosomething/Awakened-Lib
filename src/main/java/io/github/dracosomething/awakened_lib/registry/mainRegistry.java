@@ -1,5 +1,6 @@
 package io.github.dracosomething.awakened_lib.registry;
 
+import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystem;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import io.github.dracosomething.awakened_lib.registry.items.itemRegistry;
 import io.github.dracosomething.awakened_lib.registry.object.objectRegistry;
