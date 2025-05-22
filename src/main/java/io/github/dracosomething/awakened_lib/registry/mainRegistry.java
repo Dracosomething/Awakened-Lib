@@ -1,7 +1,5 @@
 package io.github.dracosomething.awakened_lib.registry;
 
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystem;
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.RegenOn;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import io.github.dracosomething.awakened_lib.registry.items.itemRegistry;
 import io.github.dracosomething.awakened_lib.registry.object.objectRegistry;
@@ -10,8 +8,6 @@ import net.neoforged.bus.api.IEventBus;
 
 public class mainRegistry {
     public static void register(IEventBus bus) {
-        new ManaSystem("test", 100, 1, RegenOn.CHUNK);
-        new ManaSystem("aaaaaa", 200, 3, RegenOn.PLAYER);
         objectRegistry.register(bus);
         DataAttachmentRegistry.register(bus);
         itemRegistry.init(bus);

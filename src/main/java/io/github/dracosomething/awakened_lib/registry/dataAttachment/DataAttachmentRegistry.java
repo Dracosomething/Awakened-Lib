@@ -10,6 +10,8 @@ import io.github.dracosomething.awakened_lib.manaSystem.Data.chunk.ChunkManaHold
 import io.github.dracosomething.awakened_lib.manaSystem.Data.chunk.ChunkManaProvider;
 import io.github.dracosomething.awakened_lib.manaSystem.Data.entity.EntityManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.Data.entity.EntityManaProvider;
+import io.github.dracosomething.awakened_lib.manaSystem.Data.xp.XPManaHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.Data.xp.XPManaProvider;
 import io.github.dracosomething.awakened_lib.manaSystem.Systems.IManaSystem;
 import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystem;
 import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystemHolder;
@@ -27,6 +29,7 @@ import java.util.function.Supplier;
 public class DataAttachmentRegistry {
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES;
     public static final Supplier<AttachmentType<ObjectsAttachement>> OBJECTS;
+    public static final Supplier<AttachmentType<XPManaHolder>> EXPERIENCE;
     private static final Map<IManaSystem, Supplier<AttachmentType<EntityManaHolder>>> ENTITIE_SYSTEMS = new HashMap<>();
     private static final Map<IManaSystem, Supplier<AttachmentType<ChunkManaHolder>>> CHUNK_SYSTEMS = new HashMap<>();
 
@@ -65,6 +68,9 @@ public class DataAttachmentRegistry {
         ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, Awakened_lib.MODID);
         OBJECTS = ATTACHMENT_TYPES.register(
                 "objects", () -> AttachmentType.builder(() -> new ObjectsAttachement()).serialize(new ChunkObjectsProvider()).build()
+        );
+        EXPERIENCE = ATTACHMENT_TYPES.register(
+                "experience", () -> AttachmentType.builder(() -> new XPManaHolder()).serialize(new XPManaProvider()).build()
         );
     }
 }
