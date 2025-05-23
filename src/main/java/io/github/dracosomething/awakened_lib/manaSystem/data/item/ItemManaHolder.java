@@ -54,9 +54,11 @@ public class ItemManaHolder {
         switch (holder.getSystem().getRegenerator()) {
             case PLAYER -> {
                 EntityManaHolder entityHolder = entity.getData(DataAttachmentRegistry.getEntity(holder.getSystem()));
-                entityHolder.setCurrent(entityHolder.getCurrent() - rate);
-                entityHolder.sync(entity);
-                this.setCurrent(this.getCurrent()+rate);
+                if (entityHolder.getCurrent() <= 0) {
+                    entityHolder.setCurrent(entityHolder.getCurrent() - rate);
+                    entityHolder.sync(entity);
+                    this.setCurrent(this.getCurrent() + rate);
+                }
             }
             case CHUNK -> {
                 BlockPos pos = entity.blockPosition();
