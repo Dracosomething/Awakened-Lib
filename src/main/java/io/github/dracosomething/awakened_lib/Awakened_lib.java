@@ -24,7 +24,6 @@ public class Awakened_lib {
 
     public Awakened_lib(IEventBus modEventBus, ModContainer modContainer) {
         mainRegistry.register(modEventBus);
-        new ManaSystem("e", 1, 1, RegenOn.NO, 1);
 
         modEventBus.addListener(SoulBoundItemsHandler::onClientSetup);
 //        NeoForge.EVENT_BUS.register(this);

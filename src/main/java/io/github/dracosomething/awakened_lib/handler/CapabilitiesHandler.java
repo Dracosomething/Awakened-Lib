@@ -82,12 +82,6 @@ public class CapabilitiesHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
-        XPManaHolder holder = event.getEntity().getData(DataAttachmentRegistry.EXPERIENCE);
-        holder.sync(event.getEntity());
-    }
-
-    @SubscribeEvent
     public static void onTrack(PlayerEvent.StartTracking event) {
         DataAttachmentRegistry.forEachEntity((system, supplier) -> {
             AttachmentType<EntityManaHolder> type = DataAttachmentRegistry.getEntity(system).get();

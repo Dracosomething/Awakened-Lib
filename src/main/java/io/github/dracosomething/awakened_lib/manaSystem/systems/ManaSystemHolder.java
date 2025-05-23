@@ -8,6 +8,7 @@ public class ManaSystemHolder {
     }
 
     public IManaSystem getSystem() {
+        if (system == null) return new XPSystem();
         return system;
     }
 }

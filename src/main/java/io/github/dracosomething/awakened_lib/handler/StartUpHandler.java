@@ -47,5 +47,8 @@ public class StartUpHandler {
         ManaSystemSetupEvent event1 = new ManaSystemSetupEvent(MANAGER);
         NeoForge.EVENT_BUS.post(event1);
         MANAGER.start(event1);
+        MANAGER.foreach((id, system) -> {
+            Awakened_lib.getLOGGER().info(id + ":" + system.getName());
+        });
     }
 }
