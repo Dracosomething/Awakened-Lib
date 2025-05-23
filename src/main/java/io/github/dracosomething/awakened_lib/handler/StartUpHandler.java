@@ -39,7 +39,7 @@ public class StartUpHandler {
     }
 
     @SubscribeEvent
-    public static void reloadClientStartup(FMLCommonSetupEvent event) {
+    public static void reloadCommonStartup(FMLCommonSetupEvent event) {
         event.enqueueWork(StartUpHandler::reload);
     }
 
