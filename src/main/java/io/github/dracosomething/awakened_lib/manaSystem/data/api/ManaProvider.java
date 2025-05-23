@@ -1,7 +1,5 @@
-package io.github.dracosomething.awakened_lib.manaSystem.Data.api;
+package io.github.dracosomething.awakened_lib.manaSystem.data.api;
 
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystem;
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystemHolder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;

@@ -2,6 +2,8 @@ package io.github.dracosomething.awakened_lib;
 
 import com.mojang.logging.LogUtils;
 import io.github.dracosomething.awakened_lib.handler.SoulBoundItemsHandler;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystem;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.RegenOn;
 import io.github.dracosomething.awakened_lib.registry.mainRegistry;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
@@ -22,6 +24,7 @@ public class Awakened_lib {
 
     public Awakened_lib(IEventBus modEventBus, ModContainer modContainer) {
         mainRegistry.register(modEventBus);
+        new ManaSystem("e", 1, 1, RegenOn.NO, 1);
 
         modEventBus.addListener(SoulBoundItemsHandler::onClientSetup);
 //        NeoForge.EVENT_BUS.register(this);

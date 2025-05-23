@@ -1,10 +1,8 @@
-package io.github.dracosomething.awakened_lib.manaSystem.Data.api;
+package io.github.dracosomething.awakened_lib.manaSystem.data.api;
 
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystemHolder;
-import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystemHolder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.UnknownNullability;

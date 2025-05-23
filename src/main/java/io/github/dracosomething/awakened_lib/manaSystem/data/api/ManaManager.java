@@ -1,14 +1,9 @@
-package io.github.dracosomething.awakened_lib.manaSystem.Data.api;
+package io.github.dracosomething.awakened_lib.manaSystem.data.api;
 
 import io.github.dracosomething.awakened_lib.events.ManaSystemEvent.*;
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystem;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
-import org.jetbrains.annotations.UnknownNullability;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystem;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class ManaManager {

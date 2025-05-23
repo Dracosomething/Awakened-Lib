@@ -1,4 +1,4 @@
-package io.github.dracosomething.awakened_lib.manaSystem.Systems;
+package io.github.dracosomething.awakened_lib.manaSystem.systems;
 
 public class ManaSystemHolder {
     private IManaSystem system;

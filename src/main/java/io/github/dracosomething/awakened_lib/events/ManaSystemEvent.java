@@ -1,11 +1,10 @@
 package io.github.dracosomething.awakened_lib.events;
 
-import io.github.dracosomething.awakened_lib.manaSystem.Data.api.ManaManager;
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystem;
+import io.github.dracosomething.awakened_lib.manaSystem.data.api.ManaManager;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystem;
 import net.neoforged.bus.api.Event;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ManaSystemEvent extends Event {

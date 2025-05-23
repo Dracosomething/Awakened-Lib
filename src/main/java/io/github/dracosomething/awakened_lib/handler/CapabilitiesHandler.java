@@ -2,27 +2,24 @@ package io.github.dracosomething.awakened_lib.handler;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsAttachement;
-import io.github.dracosomething.awakened_lib.manaSystem.Data.api.ManaHolder;
-import io.github.dracosomething.awakened_lib.manaSystem.Data.chunk.ChunkManaHolder;
-import io.github.dracosomething.awakened_lib.manaSystem.Data.entity.EntityManaHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.data.chunk.ChunkManaHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.data.entity.EntityManaHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.data.xp.XPManaHolder;
 import io.github.dracosomething.awakened_lib.network.p2c.SyncObjects;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.event.entity.EntityEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = Awakened_lib.MODID)
@@ -79,6 +76,18 @@ public class CapabilitiesHandler {
     }
 
     @SubscribeEvent
+    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        XPManaHolder holder = event.getEntity().getData(DataAttachmentRegistry.EXPERIENCE);
+        holder.sync(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
+        XPManaHolder holder = event.getEntity().getData(DataAttachmentRegistry.EXPERIENCE);
+        holder.sync(event.getEntity());
+    }
+
+    @SubscribeEvent
     public static void onTrack(PlayerEvent.StartTracking event) {
         DataAttachmentRegistry.forEachEntity((system, supplier) -> {
             AttachmentType<EntityManaHolder> type = DataAttachmentRegistry.getEntity(system).get();
@@ -87,6 +96,12 @@ public class CapabilitiesHandler {
             holder = event.getTarget().getData(type);
             holder.sync(event.getTarget());
         });
+        if (event.getTarget() instanceof Player player) {
+            XPManaHolder holder = player.getData(DataAttachmentRegistry.EXPERIENCE);
+            holder.sync(player);
+        }
+        XPManaHolder holder = event.getEntity().getData(DataAttachmentRegistry.EXPERIENCE);
+        holder.sync(event.getEntity());
     }
 
     @SubscribeEvent
@@ -98,6 +113,10 @@ public class CapabilitiesHandler {
             RegistryAccess access = event.getEntity().registryAccess();
             holderNew.deserializeNBT(access, holderOld.serializeNBT(access));
         });
+        XPManaHolder holderOld = event.getEntity().getData(DataAttachmentRegistry.EXPERIENCE);
+        XPManaHolder holderNew = event.getOriginal().getData(DataAttachmentRegistry.EXPERIENCE);
+        RegistryAccess access = event.getEntity().registryAccess();
+        holderNew.deserializeNBT(access, holderOld.serializeNBT(access));
     }
 
     @SubscribeEvent
@@ -107,6 +126,8 @@ public class CapabilitiesHandler {
             EntityManaHolder holder = event.getEntity().getData(type);
             holder.sync(event.getEntity());
         });
+        XPManaHolder holder = event.getEntity().getData(DataAttachmentRegistry.EXPERIENCE);
+        holder.sync(event.getEntity());
     }
 
     @SubscribeEvent
@@ -116,5 +137,7 @@ public class CapabilitiesHandler {
             EntityManaHolder holder = event.getEntity().getData(type);
             holder.sync(event.getEntity());
         });
+        XPManaHolder holder = event.getEntity().getData(DataAttachmentRegistry.EXPERIENCE);
+        holder.sync(event.getEntity());
     }
 }

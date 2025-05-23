@@ -1,4 +1,4 @@
-package io.github.dracosomething.awakened_lib.manaSystem.Systems;
+package io.github.dracosomething.awakened_lib.manaSystem.systems;
 
 public class XPSystem implements IManaSystem {
     public double getMax() {
@@ -15,5 +15,9 @@ public class XPSystem implements IManaSystem {
 
     public RegenOn getRegenerator() {
         return RegenOn.NO;
+    }
+
+    public int getRegenRate() {
+        return 0;
     }
 }

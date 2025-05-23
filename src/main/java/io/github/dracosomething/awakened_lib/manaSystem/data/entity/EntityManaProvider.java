@@ -1,9 +1,8 @@
-package io.github.dracosomething.awakened_lib.manaSystem.Data.entity;
+package io.github.dracosomething.awakened_lib.manaSystem.data.entity;
 
 import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
-import io.github.dracosomething.awakened_lib.manaSystem.Data.api.ManaHolder;
-import io.github.dracosomething.awakened_lib.manaSystem.Data.api.ManaProvider;
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystem;
+import io.github.dracosomething.awakened_lib.manaSystem.data.api.ManaProvider;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystem;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

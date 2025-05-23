@@ -1,25 +1,25 @@
-package io.github.dracosomething.awakened_lib.manaSystem.Data.entity;
+package io.github.dracosomething.awakened_lib.manaSystem.data.xp;
 
 import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
-import io.github.dracosomething.awakened_lib.manaSystem.Data.api.ManaHolder;
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystem;
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystemHolder;
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.RegenOn;
+import io.github.dracosomething.awakened_lib.manaSystem.data.api.ManaHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystemHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.RegenOn;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.XPSystem;
 import io.github.dracosomething.awakened_lib.network.p2c.SyncEntityManaSystem;
-import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
+import io.github.dracosomething.awakened_lib.network.p2c.SyncXpManaSystem;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.UnknownNullability;
 
-public class EntityManaHolder extends ManaHolder<Entity> {
+public class XPManaHolder extends ManaHolder<Player> {
     private double current;
 
-    public EntityManaHolder(ManaSystemHolder holder) {
-        super(holder);
+    public XPManaHolder() {
+        super(new ManaSystemHolder(new XPSystem()));
     }
 
     public void setCurrent(double current) {
@@ -30,19 +30,19 @@ public class EntityManaHolder extends ManaHolder<Entity> {
         return current;
     }
 
-    public void tick(Entity entity) {
+    public void tick(Player entity) {
         boolean flag = this.system.getSystem().getRegenerator() == RegenOn.PLAYER;
         if (flag) {
-            this.setCurrent(this.getCurrent() + this.system.getSystem().getRegen());
+            this.current = Mth.clamp(entity.totalExperience, 0, Integer.MAX_VALUE);
             this.sync(entity);
         }
     }
 
     @Override
-    public void sync(Entity entity) {
+    public void sync(Player entity) {
         if (!entity.level().isClientSide) {
             if (entity instanceof ServerPlayer player) {
-                PacketDistributor.sendToPlayer(player, new SyncEntityManaSystem(
+                PacketDistributor.sendToPlayer(player, new SyncXpManaSystem(
                         this.serializeNBT(player.registryAccess()), player.getId()
                 ));
             }
@@ -50,14 +50,13 @@ public class EntityManaHolder extends ManaHolder<Entity> {
     }
 
     @Override
-    public ManaHolder<Entity> getFrom(Entity holder) {
-        return holder.getData(DataAttachmentRegistry.getEntity(this.system.getSystem()).get());
+    public ManaHolder<Player> getFrom(Player holder) {
+        return null;
     }
 
     @Override
     public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
-        tag.putDouble("current", this.current);
         tag.putString("system", this.system.getSystem().getName());
         return tag;
     }
@@ -66,6 +65,5 @@ public class EntityManaHolder extends ManaHolder<Entity> {
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
         ManaSystemHolder holder = new ManaSystemHolder(StartUpHandler.getMANAGER().get(tag.getString("system")));
         this.setSystem(holder);
-        this.current = tag.getDouble("current");
     }
 }

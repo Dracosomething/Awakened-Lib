@@ -1,14 +1,11 @@
 package io.github.dracosomething.awakened_lib.network.p2c;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
-import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsAttachement;
-import io.github.dracosomething.awakened_lib.manaSystem.Data.chunk.ChunkManaHolder;
-import io.github.dracosomething.awakened_lib.manaSystem.Data.entity.EntityManaHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.data.entity.EntityManaHolder;
 import io.github.dracosomething.awakened_lib.network.Packet;
 import io.github.dracosomething.awakened_lib.network.Side;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;

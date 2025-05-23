@@ -2,6 +2,7 @@ package io.github.dracosomething.awakened_lib.network.p2c;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.manaSystem.data.entity.EntityManaHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.data.xp.XPManaHolder;
 import io.github.dracosomething.awakened_lib.network.Packet;
 import io.github.dracosomething.awakened_lib.network.Side;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
@@ -14,42 +15,41 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class SyncEntityManaSystem implements CustomPacketPayload {
-    private static Type<SyncEntityManaSystem> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Awakened_lib.MODID, "sync_mana_entity"));
-    private static StreamCodec<RegistryFriendlyByteBuf, SyncEntityManaSystem> CODEC = StreamCodec.of(SyncEntityManaSystem::toBytes, SyncEntityManaSystem::new);
-    public static Packet<SyncEntityManaSystem> PACKET = new Packet<>(
-            TYPE, CODEC, SyncEntityManaSystem::handle, Side.CLIENT
+public class SyncXpManaSystem implements CustomPacketPayload {
+    private static CustomPacketPayload.Type<SyncXpManaSystem> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Awakened_lib.MODID, "sync_xp_mana"));
+    private static StreamCodec<RegistryFriendlyByteBuf, SyncXpManaSystem> CODEC = StreamCodec.of(SyncXpManaSystem::toBytes, SyncXpManaSystem::new);
+    public static Packet<SyncXpManaSystem> PACKET = new Packet<>(
+            TYPE, CODEC, SyncXpManaSystem::handle, Side.CLIENT
     );
     private CompoundTag tag;
     private int id;
 
-    public SyncEntityManaSystem(CompoundTag tag, int id) {
+    public SyncXpManaSystem(CompoundTag tag, int id) {
         this.id = id;
         this.tag = tag;
     }
 
-    public SyncEntityManaSystem(FriendlyByteBuf buf) {
+    public SyncXpManaSystem(FriendlyByteBuf buf) {
         this.id = buf.readInt();
         this.tag = buf.readNbt();
     }
 
-    public static void toBytes(RegistryFriendlyByteBuf buf, SyncEntityManaSystem objects) {
+    public static void toBytes(RegistryFriendlyByteBuf buf, SyncXpManaSystem objects) {
         buf.writeInt(objects.id);
         buf.writeNbt(objects.tag);
     }
 
-    public static void handle(SyncEntityManaSystem packet, IPayloadContext context) {
+    public static void handle(SyncXpManaSystem packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (Minecraft.getInstance().level != null) {
                 Entity entity = Minecraft.getInstance().level.getEntity(packet.id);
-                if (entity != null) {
-                    DataAttachmentRegistry.forEachEntity((system, mana) -> {
-                        EntityManaHolder holder = entity.getData(DataAttachmentRegistry.getEntity(system).get());
-                        RegistryAccess access = entity.registryAccess();
-                        holder.deserializeNBT(access, packet.tag);
-                    });
+                if (entity instanceof Player player) {
+                    XPManaHolder holder = player.getData(DataAttachmentRegistry.EXPERIENCE);
+                    RegistryAccess access = player.registryAccess();
+                    holder.deserializeNBT(access, packet.tag);
                     entity.refreshDimensions();
                 }
             }
@@ -57,7 +57,7 @@ public class SyncEntityManaSystem implements CustomPacketPayload {
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 }

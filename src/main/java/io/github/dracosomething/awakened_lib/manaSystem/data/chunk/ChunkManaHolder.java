@@ -1,22 +1,17 @@
-package io.github.dracosomething.awakened_lib.manaSystem.Data.chunk;
+package io.github.dracosomething.awakened_lib.manaSystem.data.chunk;
 
 import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
-import io.github.dracosomething.awakened_lib.manaSystem.Data.api.ManaHolder;
-import io.github.dracosomething.awakened_lib.manaSystem.Data.entity.EntityManaHolder;
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.ManaSystemHolder;
-import io.github.dracosomething.awakened_lib.manaSystem.Systems.RegenOn;
+import io.github.dracosomething.awakened_lib.manaSystem.data.api.ManaHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.data.entity.EntityManaHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystemHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.RegenOn;
 import io.github.dracosomething.awakened_lib.network.p2c.SyncChunkManaSystem;
-import io.github.dracosomething.awakened_lib.network.p2c.SyncEntityManaSystem;
-import io.github.dracosomething.awakened_lib.network.p2c.SyncObjects;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.UnknownNullability;
 
