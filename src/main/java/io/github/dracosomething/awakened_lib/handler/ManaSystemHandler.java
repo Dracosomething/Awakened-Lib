@@ -3,9 +3,15 @@ package io.github.dracosomething.awakened_lib.handler;
 import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.manaSystem.data.chunk.ChunkManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.data.entity.EntityManaHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.data.item.ItemManaHolder;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
+import io.github.dracosomething.awakened_lib.registry.dataComponents.dataComponentsRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -37,6 +43,31 @@ public class ManaSystemHandler {
                         holder.tick(entity);
                     }
                 }
+                if (entity.getWeaponItem() != null) {
+                    ItemManaHolder holder = entity.getWeaponItem().get(dataComponentsRegistry.getItem(system));
+                    if (holder != null) {
+                        holder.tick(entity.getWeaponItem(), entity);
+                    } else {
+                        entity.getWeaponItem().set(dataComponentsRegistry.getItem(system), new ItemManaHolder(system));
+                    }
+                }
+            }
+        });
+    }
+
+    @SubscribeEvent
+    public static void updateData(PlayerTickEvent.Post event) {
+        StartUpHandler.getMANAGER().foreach((id, system) -> {
+            boolean canTick = event.getEntity().tickCount % system.getRegenRate() == 0;
+            if (canTick) {
+                event.getEntity().getInventory().items.forEach((item) -> {
+                    ItemManaHolder holder = item.get(dataComponentsRegistry.getItem(system));
+                    if (holder != null) {
+                        holder.tick(item, event.getEntity());
+                    } else {
+                        item.set(dataComponentsRegistry.getItem(system), new ItemManaHolder(system));
+                    }
+                });
             }
         });
     }

@@ -2,6 +2,7 @@ package io.github.dracosomething.awakened_lib.manaSystem.data.entity;
 
 import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
 import io.github.dracosomething.awakened_lib.manaSystem.data.api.ManaProvider;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.IManaSystem;
 import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystem;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import net.minecraft.core.HolderLookup;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public class EntityManaProvider extends ManaProvider<Entity, EntityManaHolder> {
     @Override
     public EntityManaHolder read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-        ManaSystem system = StartUpHandler.getMANAGER().get(tag.getString("system"));
+        IManaSystem system = StartUpHandler.getMANAGER().get(tag.getString("system"));
         EntityManaHolder mana = holder.getData(DataAttachmentRegistry.getEntity(system));
         mana.deserializeNBT(provider, tag);
         return mana;

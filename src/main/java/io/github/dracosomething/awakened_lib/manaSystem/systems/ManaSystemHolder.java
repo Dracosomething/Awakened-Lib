@@ -1,5 +1,7 @@
 package io.github.dracosomething.awakened_lib.manaSystem.systems;
 
+import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
+
 public class ManaSystemHolder {
     private IManaSystem system;
 
@@ -8,7 +10,7 @@ public class ManaSystemHolder {
     }
 
     public IManaSystem getSystem() {
-        if (system == null) return new XPSystem();
+        if (system == null) return StartUpHandler.DEFAULT;
         return system;
     }
 }

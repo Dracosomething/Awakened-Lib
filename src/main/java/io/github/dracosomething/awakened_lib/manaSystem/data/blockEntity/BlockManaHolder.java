@@ -1,23 +1,28 @@
-package io.github.dracosomething.awakened_lib.manaSystem.data.entity;
+package io.github.dracosomething.awakened_lib.manaSystem.data.blockEntity;
 
 import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
 import io.github.dracosomething.awakened_lib.manaSystem.data.api.ManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystemHolder;
-import io.github.dracosomething.awakened_lib.manaSystem.systems.RegenOn;
-import io.github.dracosomething.awakened_lib.network.p2c.SyncEntityManaSystem;
+import io.github.dracosomething.awakened_lib.network.p2c.SyncBlockManaSystem;
+import io.github.dracosomething.awakened_lib.network.p2c.SyncChunkManaSystem;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.UnknownNullability;
 
-public class EntityManaHolder extends ManaHolder<Entity> {
+public class BlockManaHolder extends ManaHolder<BlockEntity> {
     private double current;
 
-    public EntityManaHolder(ManaSystemHolder holder) {
+    public BlockManaHolder(ManaSystemHolder holder) {
         super(holder);
+    }
+
+    public double getCurrent() {
+        return current;
     }
 
     public void setCurrent(double current) {
@@ -27,30 +32,15 @@ public class EntityManaHolder extends ManaHolder<Entity> {
             this.current = current;
     }
 
-    public double getCurrent() {
-        return current;
-    }
-
-    public void tick(Entity entity) {
-        boolean flag = this.system.getSystem().getRegenerator() == RegenOn.PLAYER;
-        if (flag) {
-            this.setCurrent(this.getCurrent() + this.system.getSystem().getRegen());
-            this.sync(entity);
-        }
+    public void sync(BlockEntity holder) {
+        PacketDistributor.sendToAllPlayers(new SyncBlockManaSystem(
+                this.serializeNBT(holder.getLevel().registryAccess()), holder.getBlockPos()
+        ));
     }
 
     @Override
-    public void sync(Entity entity) {
-        if (!entity.level().isClientSide) {
-            PacketDistributor.sendToAllPlayers(new SyncEntityManaSystem(
-                    this.serializeNBT(entity.registryAccess()), entity.getId()
-            ));
-        }
-    }
-
-    @Override
-    public ManaHolder<Entity> getFrom(Entity holder) {
-        return holder.getData(DataAttachmentRegistry.getEntity(this.system.getSystem()).get());
+    public ManaHolder<BlockEntity> getFrom(BlockEntity holder) {
+        return null;
     }
 
     @Override

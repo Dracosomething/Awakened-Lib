@@ -12,7 +12,7 @@ public class itemRegistry {
     private static DeferredRegister<Item> ITEMS;
     private static DeferredHolder<Item, Item> TEST;
 
-    public static void init(IEventBus bus) {
+    public static void register(IEventBus bus) {
         ITEMS.register(bus);
     }
 

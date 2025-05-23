@@ -41,11 +41,9 @@ public class XPManaHolder extends ManaHolder<Player> {
     @Override
     public void sync(Player entity) {
         if (!entity.level().isClientSide) {
-            if (entity instanceof ServerPlayer player) {
-                PacketDistributor.sendToPlayer(player, new SyncXpManaSystem(
-                        this.serializeNBT(player.registryAccess()), player.getId()
-                ));
-            }
+            PacketDistributor.sendToAllPlayers(new SyncXpManaSystem(
+                    this.serializeNBT(entity.registryAccess()), entity.getId()
+            ));
         }
     }
 

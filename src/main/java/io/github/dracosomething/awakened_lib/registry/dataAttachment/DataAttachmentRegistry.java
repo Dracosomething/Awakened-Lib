@@ -4,6 +4,8 @@ import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.dataAttachements.ChunkObjectsProvider;
 import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsAttachement;
 import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
+import io.github.dracosomething.awakened_lib.manaSystem.data.blockEntity.BlockManaHolder;
+import io.github.dracosomething.awakened_lib.manaSystem.data.blockEntity.BlockManaProvider;
 import io.github.dracosomething.awakened_lib.manaSystem.data.chunk.ChunkManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.data.chunk.ChunkManaProvider;
 import io.github.dracosomething.awakened_lib.manaSystem.data.entity.EntityManaHolder;
@@ -28,6 +30,7 @@ public class DataAttachmentRegistry {
     public static final Supplier<AttachmentType<XPManaHolder>> EXPERIENCE;
     private static final Map<IManaSystem, Supplier<AttachmentType<EntityManaHolder>>> ENTITIE_SYSTEMS = new HashMap<>();
     private static final Map<IManaSystem, Supplier<AttachmentType<ChunkManaHolder>>> CHUNK_SYSTEMS = new HashMap<>();
+    private static final Map<IManaSystem, Supplier<AttachmentType<BlockManaHolder>>> BLOCK_SYSTEMS = new HashMap<>();
 
     public static Supplier<AttachmentType<EntityManaHolder>> getEntity(IManaSystem system) {
         return ENTITIE_SYSTEMS.get(system);
@@ -45,6 +48,14 @@ public class DataAttachmentRegistry {
         CHUNK_SYSTEMS.forEach(consumer);
     }
 
+    public static Supplier<AttachmentType<BlockManaHolder>> getBlock(IManaSystem system) {
+        return BLOCK_SYSTEMS.get(system);
+    }
+
+    public static void forEachBlock(BiConsumer<IManaSystem, Supplier<AttachmentType<BlockManaHolder>>> consumer) {
+        BLOCK_SYSTEMS.forEach(consumer);
+    }
+
     public static void register(IEventBus eventBus) {
         StartUpHandler.getMANAGER().foreach((id, system) -> {
             ManaSystemHolder holder = new ManaSystemHolder(system);
@@ -56,6 +67,10 @@ public class DataAttachmentRegistry {
                     id + "_chunk", () -> AttachmentType.builder(() -> new ChunkManaHolder(holder)).serialize(new ChunkManaProvider()).build()
             );
             CHUNK_SYSTEMS.put(system, chunkSupplier);
+            Supplier<AttachmentType<BlockManaHolder>> blockSupplier = ATTACHMENT_TYPES.register(
+                    id + "_block", () -> AttachmentType.builder(() -> new BlockManaHolder(holder)).serialize(new BlockManaProvider()).build()
+            );
+            BLOCK_SYSTEMS.put(system, blockSupplier);
         });
         ATTACHMENT_TYPES.register(eventBus);
     }
