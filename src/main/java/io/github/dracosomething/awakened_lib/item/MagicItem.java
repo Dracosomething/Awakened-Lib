@@ -15,14 +15,14 @@ public interface MagicItem {
 
     double getCost();
 
-    Ability getSpell();
+    void onUse(ItemStack stack, LivingEntity entity);
 
     default void activateSpell(ItemStack stack, LivingEntity entity) {
         ItemManaHolder holder = stack.get(dataComponentsRegistry.getItem(this.getSystem()));
         if (holder != null) {
             if (holder.getCurrent() - this.getCost() >= 0) {
                 holder.setCurrent(holder.getCurrent() - this.getCost());
-                this.getSpell().onPressed(this.getSpell().createDefaultInstance(), entity);
+                this.onUse(stack, entity);
             }
         }
     }
