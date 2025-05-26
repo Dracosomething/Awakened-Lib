@@ -8,7 +8,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.function.Function;
 
 public class ObjectType<T extends TickingObject> {
-    private final Function<ObjectType<T>, T> constructor;
+    private final ObjectBuilder<T> builder;
     private final AABB boundingBox;
 
 //    public ObjectType(Supplier<T> constructor, AABB boundingBox) {
@@ -16,8 +16,8 @@ public class ObjectType<T extends TickingObject> {
 //        this.boundingBox = boundingBox;
 //    }
 
-    public ObjectType(Function<ObjectType<T>, T> aNew, AABB boundingBox) {
-        this.constructor = aNew;
+    public ObjectType(ObjectBuilder<T> builder, AABB boundingBox) {
+        this.builder = builder;
         this.boundingBox = boundingBox;
     }
 
@@ -28,11 +28,15 @@ public class ObjectType<T extends TickingObject> {
     }
 
     public T create(int life, Level level, Vec3 pos) {
-        T object = this.constructor.apply(this);
+        T object = this.builder.create(this);
         object.setPos(pos);
         object.setLevel(level);
         object.setLife(life);
         object.setBoundingBox(this.boundingBox);
         return object;
+    }
+
+    public interface ObjectBuilder<T extends TickingObject> {
+        T create(ObjectType<T> type);
     }
 }

@@ -4,10 +4,9 @@ import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.events.SoulBoundItemsSetupEvent;
 import io.github.dracosomething.awakened_lib.helper.ClassHelper;
 import io.github.dracosomething.awakened_lib.helper.EnchantmentHelper;
-import io.github.dracosomething.awakened_lib.library.SoulBoundItem;
+import io.github.dracosomething.awakened_lib.item.SoulBoundItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -23,12 +22,8 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @EventBusSubscriber(modid = Awakened_lib.MODID, bus = EventBusSubscriber.Bus.GAME)

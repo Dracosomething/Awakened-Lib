@@ -29,10 +29,14 @@ public class ChunkManaHolder extends ManaHolder<ChunkAccess> {
     }
 
     public void tick(Entity entity) {
-        boolean flag = this.system.getSystem().getRegenerator() == RegenOn.CHUNK;
+        boolean flag = this.getISystem().getRegenerator() == RegenOn.CHUNK;
         if (flag) {
-            EntityManaHolder holder = entity.getData(DataAttachmentRegistry.getEntity(system.getSystem()));
-            holder.setCurrent(holder.getCurrent() + (this.system.getSystem().getRegen() * this.multiplier));
+            EntityManaHolder holder = entity.getData(DataAttachmentRegistry.getEntity(getISystem()));
+            double newCurr = holder.getCurrent() + (this.getISystem().getRegen() * this.multiplier);
+            if (newCurr >= holder.getISystem().getMax()) {
+                newCurr = holder.getISystem().getMax();
+            }
+            holder.setCurrent(newCurr);
             holder.sync(entity);
         }
     }

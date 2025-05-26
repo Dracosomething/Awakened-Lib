@@ -1,5 +1,6 @@
 package io.github.dracosomething.awakened_lib.manaSystem.data.api;
 
+import io.github.dracosomething.awakened_lib.manaSystem.systems.IManaSystem;
 import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystemHolder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -36,6 +37,10 @@ public abstract class ManaHolder<T extends IAttachmentHolder> implements INBTSer
 
     protected void setSystem(ManaSystemHolder system) {
         this.system = system;
+    }
+
+    public IManaSystem getISystem() {
+        return this.system.getSystem();
     }
 
     public T getAttacher() {

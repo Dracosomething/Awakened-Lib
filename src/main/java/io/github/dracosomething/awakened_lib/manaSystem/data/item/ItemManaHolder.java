@@ -6,6 +6,7 @@ import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
 import io.github.dracosomething.awakened_lib.manaSystem.data.chunk.ChunkManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.data.entity.EntityManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.systems.IManaSystem;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystem;
 import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystemHolder;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import io.github.dracosomething.awakened_lib.registry.dataComponents.dataComponentsRegistry;
@@ -50,22 +51,40 @@ public class ItemManaHolder {
     }
 
     public void tick(ItemStack stack, Entity entity) {
-        double rate = holder.getSystem().getRegen();
-        switch (holder.getSystem().getRegenerator()) {
-            case PLAYER -> {
-                EntityManaHolder entityHolder = entity.getData(DataAttachmentRegistry.getEntity(holder.getSystem()));
-                if (entityHolder.getCurrent() <= 0) {
-                    entityHolder.setCurrent(entityHolder.getCurrent() - rate);
-                    entityHolder.sync(entity);
-                    this.setCurrent(this.getCurrent() + rate);
+        if (this.getCurrent() < this.getHolder().getSystem().getMax()) {
+            double rate = holder.getSystem().getRegen();
+            switch (holder.getSystem().getRegenerator()) {
+                case PLAYER -> {
+                    EntityManaHolder entityHolder = entity.getData(DataAttachmentRegistry.getEntity(holder.getSystem()));
+                    if (entityHolder.getCurrent() <= 0) {
+                        double newCurr = entityHolder.getCurrent() - rate;
+                        double thisCurr = this.getCurrent() + rate;
+                        double diff;
+                        if (thisCurr >= this.getSystem().getMax()) {
+                            diff = thisCurr - this.getSystem().getMax();
+                            thisCurr = this.getSystem().getMax();
+                            newCurr = entityHolder.getCurrent() + diff;
+                        }
+                        if (newCurr < 0) {
+                            newCurr = 0;
+                            thisCurr = this.getCurrent() - entityHolder.getCurrent();
+                        }
+                        this.setCurrent(thisCurr);
+                        entityHolder.setCurrent(newCurr);
+                        entityHolder.sync(entity);
+                    }
                 }
-            }
-            case CHUNK -> {
-                BlockPos pos = entity.blockPosition();
-                Level level = entity.level();
-                ChunkAccess chunk = level.getChunkAt(pos);
-                ChunkManaHolder chunkHolder = chunk.getData(DataAttachmentRegistry.getChunk(holder.getSystem()));
-                this.setCurrent(this.getCurrent() + (rate * chunkHolder.getMultiplier()));
+                case CHUNK -> {
+                    BlockPos pos = entity.blockPosition();
+                    Level level = entity.level();
+                    ChunkAccess chunk = level.getChunkAt(pos);
+                    ChunkManaHolder chunkHolder = chunk.getData(DataAttachmentRegistry.getChunk(holder.getSystem()));
+                    double newCurr = this.getCurrent() + (rate * chunkHolder.getMultiplier());
+                    if (newCurr >= this.getSystem().getMax()) {
+                        newCurr = this.getSystem().getMax();
+                    }
+                    this.setCurrent(newCurr);
+                }
             }
         }
     }
@@ -87,6 +106,10 @@ public class ItemManaHolder {
 
     public String getSystemID() {
         return systemID;
+    }
+
+    public IManaSystem getSystem() {
+        return this.getHolder().getSystem();
     }
 
     @Override

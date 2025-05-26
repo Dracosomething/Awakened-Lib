@@ -32,9 +32,13 @@ public class EntityManaHolder extends ManaHolder<Entity> {
     }
 
     public void tick(Entity entity) {
-        boolean flag = this.system.getSystem().getRegenerator() == RegenOn.PLAYER;
+        boolean flag = this.getISystem().getRegenerator() == RegenOn.PLAYER;
         if (flag) {
-            this.setCurrent(this.getCurrent() + this.system.getSystem().getRegen());
+            double newCurr = this.getCurrent() + this.getISystem().getRegen();
+            if (newCurr >= this.getISystem().getMax()) {
+                newCurr = this.getISystem().getMax();
+            }
+            this.setCurrent(newCurr);
             this.sync(entity);
         }
     }

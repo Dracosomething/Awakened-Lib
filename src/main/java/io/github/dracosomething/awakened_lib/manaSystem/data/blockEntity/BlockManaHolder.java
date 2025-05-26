@@ -28,6 +28,8 @@ public class BlockManaHolder extends ManaHolder<BlockEntity> {
     public void setCurrent(double current) {
         if (current < 0)
             this.current = 0;
+        else if (current >= this.getISystem().getMax())
+            this.current = this.getISystem().getMax();
         else
             this.current = current;
     }
