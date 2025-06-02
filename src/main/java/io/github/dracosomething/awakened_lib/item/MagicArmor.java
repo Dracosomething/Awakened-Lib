@@ -13,18 +13,10 @@ public interface MagicArmor extends MagicItem {
         return false;
     };
 
-    default void fullSetBonus(ItemStack[] stacks, LivingEntity entity) {
+    default ArmorItem[] getFullSet() {
+        return new ArmorItem[]{};
     }
 
-    default void activateSpell(ItemStack stack, LivingEntity entity) {
-        if (stack.getItem() instanceof ArmorItem item) {
-            ItemManaHolder holder = stack.get(dataComponentsRegistry.getItem(this.getSystem()));
-            if (holder != null) {
-                if (holder.getCurrent() - this.getCost() >= 0) {
-                    holder.setCurrent(holder.getCurrent() - this.getCost());
-                    this.onActivate(stack, item, entity);
-                }
-            }
-        }
+    default void fullSetBonus(ItemStack[] stacks, LivingEntity entity) {
     }
 }
