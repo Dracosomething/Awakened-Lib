@@ -1,7 +1,5 @@
 package io.github.dracosomething.awakened_lib.util;
 
-import io.github.dracosomething.awakened_lib.util.TimerHelper;
-
 import java.util.Arrays;
 
 public final class Timer implements Runner {
@@ -14,18 +12,6 @@ public final class Timer implements Runner {
         this.tasks = new Task[128];
         canceled = false;
         TimerHelper.add(this);
-    }
-
-    public void schedule(Task task, long duration) {
-        this.schedule(task, duration, 0);
-    }
-
-    public void schedule(long delay, Task task) {
-        this.schedule(task, 1, delay);
-    }
-
-    public void schedule(Task task) {
-        this.schedule(task, 1, 0);
     }
 
     public void schedule(Task task, long duration, long delay) {

@@ -1,6 +1,5 @@
-package io.github.dracosomething.awakened_lib.item;
+package io.github.dracosomething.awakened_lib.item.util;
 
-import io.github.dracosomething.awakened_lib.ability.Ability;
 import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
 import io.github.dracosomething.awakened_lib.manaSystem.data.item.ItemManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.systems.IManaSystem;

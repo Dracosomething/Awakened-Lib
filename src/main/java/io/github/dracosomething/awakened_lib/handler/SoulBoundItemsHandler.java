@@ -4,7 +4,8 @@ import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.events.SoulBoundItemsSetupEvent;
 import io.github.dracosomething.awakened_lib.helper.ClassHelper;
 import io.github.dracosomething.awakened_lib.helper.EnchantmentHelper;
-import io.github.dracosomething.awakened_lib.item.SoulBoundItem;
+import io.github.dracosomething.awakened_lib.item.util.MagicItem;
+import io.github.dracosomething.awakened_lib.item.util.SoulBoundItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -34,7 +35,7 @@ public class SoulBoundItemsHandler {
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             List<Item> items = BuiltInRegistries.ITEM.stream().filter((item) -> {
-                return ClassHelper.isAnotatedWith(item.getClass(), SoulBoundItem.class) && item !=  Items.AIR;
+                return (ClassHelper.isAnotatedWith(item.getClass(), SoulBoundItem.class) || ClassHelper.hasInterface(item.getClass(), MagicItem.class)) && item !=  Items.AIR;
             }).toList();
             SoulBoundItemsSetupEvent event1 = new SoulBoundItemsSetupEvent(items);
             items = event1.getItems();

@@ -8,7 +8,8 @@ import java.util.Arrays;
 public class ClassHelper {
     public static boolean hasInterface(Class<?> targetClass, Class<?> targetTnterface) {
         if (!targetTnterface.isInterface()) return false;
-        return Arrays.stream(targetClass.getInterfaces()).toList().contains(targetTnterface);
+        return Arrays.stream(targetClass.getInterfaces()).toList().contains(targetTnterface) ||
+                Arrays.stream(targetClass.getInterfaces()).anyMatch((clazz) -> clazz.isInstance(targetTnterface));
     }
 
     public static boolean isAnotatedWith(Class<?> targetClass, Class<? extends Annotation> anotation) {

@@ -1,9 +1,14 @@
 package io.github.dracosomething.awakened_lib.util;
 
-import io.github.dracosomething.awakened_lib.util.Task;
-import io.github.dracosomething.awakened_lib.util.TimerHelper;
-
+/**
+ * This class is an example of using the <a href="#{@link}">{@link Runner}</a> interface.
+ * <p>
+ * Use this class if you want to have a <a href="#{@link}">{@link Task}</a> run at specific ticks.
+ *
+ * @see Runner
+ */
 public final class Scheduler implements Runner {
+    // fields
     private Task task;
     private String id;
     private int[] targetTicks;
@@ -11,15 +16,38 @@ public final class Scheduler implements Runner {
     private int tick;
     private boolean canceled;
 
-    public Scheduler(String name, Task task, int... targetTicks) {
+    /**
+     * The constructor of the class.
+     * <p>
+     * Automatically registers the new <code>Scheduler</code>.
+     *
+     * @param name          The name of the <code>Scheduler</code>
+     * @param task          The <a href="#{@link}">{@link Task}</a> that should be scheduled
+     * @param duration      How long the <a href="#{@link}">{@link Task}</a> should run
+     * @param delay         The amount of time in between running the <a href="#{@link}">{@link Task}</a>
+     * @param targetTicks   The ticks that the <a href="#{@link}">{@link Task}</a> should get run on
+     */
+    public Scheduler(String name, Task task, long duration, long delay, int... targetTicks) {
         this.id = name;
         this.task = task;
         this.targetTicks = targetTicks;
         this.currentTick = 0;
         this.tick = 0;
         this.canceled = false;
+        TimerHelper.add(this);
+        this.schedule(this.task, duration, delay);
     }
 
+    /**
+     * This method has to be filled when implementing this interface.
+     * This method will get called when you want to add a task to run
+     * in the timer.
+     *
+     * @param task      The task that will get scheduled on the <code>Scheduler</code>
+     * @param duration  How long the <a href="#{@link}">{@link Task}</a> should run
+     * @param delay     The amount of time in between running the <a href="#{@link}">{@link Task}</a>
+     * @see Task
+     */
     public void schedule(Task task, long duration, long delay) {
         task.delay = delay;
         task.duration = duration;
@@ -28,6 +56,9 @@ public final class Scheduler implements Runner {
         this.task = task;
     }
 
+    /**
+     * method used to cancel this <code>Scheduler</code>
+     */
     public void cancel() {
         this.task = null;
         this.id = null;
@@ -35,10 +66,17 @@ public final class Scheduler implements Runner {
         this.canceled = true;
     }
 
+    /**
+     * Use this method to get the name of the <code>Scheduler</code>
+     * @return  the <code>id</code>> of the <code>Scheduler</code>.
+     */
     public String getName() {
         return this.id;
     }
 
+    /**
+     * This method is used to make the <code>Scheduler</code> run it's <a href="#{@link}">{@link Task}</a>
+     */
     public void runTasks() {
         if (!this.canceled) {
             if (this.task != null) {

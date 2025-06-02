@@ -1,4 +1,4 @@
-package io.github.dracosomething.awakened_lib.item;
+package io.github.dracosomething.awakened_lib.item.util;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
