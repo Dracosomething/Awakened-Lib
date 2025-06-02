@@ -1,6 +1,7 @@
 package io.github.dracosomething.awakened_lib.ability;
 
 import io.github.dracosomething.awakened_lib.api.ability.AbilityAPI;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.IManaSystem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
@@ -16,8 +17,7 @@ public class AbilityInstance {
     private boolean dirty = false;
 
     public AbilityInstance(Ability ability) {
-        this.ability = ability;
-    }
+        this.ability = ability;}
 
     public Ability getAbility() {
         return ability;

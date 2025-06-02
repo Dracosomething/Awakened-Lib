@@ -1,6 +1,7 @@
 package io.github.dracosomething.awakened_lib.ability;
 
 import io.github.dracosomething.awakened_lib.api.ability.AbilityAPI;
+import io.github.dracosomething.awakened_lib.manaSystem.systems.IManaSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -12,6 +13,11 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 public class Ability {
     private final CompoundTag tag = new CompoundTag();
+    private final IManaSystem system;
+
+    public Ability(IManaSystem system) {
+        this.system = system;
+    }
 
     public ResourceLocation getRegistryName() {
         return AbilityAPI.getRegistry().getKey(this);
@@ -53,7 +59,11 @@ public class Ability {
         return this.tag;
     }
 
-    public double getCost() {
+    public IManaSystem getSystem() {
+        return system;
+    }
+
+    public double getCost(int mode) {
         return 0.0;
     }
 
