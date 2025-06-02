@@ -1,4 +1,4 @@
-package io.github.dracosomething.awakened_lib.dataAttachements;
+package io.github.dracosomething.awakened_lib.objects.data;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.helper.NBTHelper;
@@ -6,12 +6,8 @@ import io.github.dracosomething.awakened_lib.objects.api.ObjectType;
 import io.github.dracosomething.awakened_lib.objects.api.TickingObject;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import io.github.dracosomething.awakened_lib.registry.object.objectRegistry;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;

@@ -1,7 +1,7 @@
 package io.github.dracosomething.awakened_lib.objects.api;
 
 import io.github.dracosomething.awakened_lib.api.object.ObjectsAPI;
-import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsAttachement;
+import io.github.dracosomething.awakened_lib.objects.data.ObjectsAttachement;
 import io.github.dracosomething.awakened_lib.events.ObjectEvent;
 import io.github.dracosomething.awakened_lib.helper.NBTHelper;
 import io.github.dracosomething.awakened_lib.util.Task;
@@ -10,12 +10,9 @@ import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachm
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;

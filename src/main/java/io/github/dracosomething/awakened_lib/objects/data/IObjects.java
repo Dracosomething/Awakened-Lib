@@ -1,4 +1,4 @@
-package io.github.dracosomething.awakened_lib.dataAttachements;
+package io.github.dracosomething.awakened_lib.objects.data;
 
 import io.github.dracosomething.awakened_lib.objects.api.TickingObject;
 import net.minecraft.nbt.CompoundTag;

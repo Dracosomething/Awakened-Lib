@@ -1,7 +1,7 @@
 package io.github.dracosomething.awakened_lib.handler;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
-import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsAttachement;
+import io.github.dracosomething.awakened_lib.objects.data.ObjectsAttachement;
 import io.github.dracosomething.awakened_lib.manaSystem.data.blockEntity.BlockManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.data.chunk.ChunkManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.data.entity.EntityManaHolder;
@@ -13,16 +13,12 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;

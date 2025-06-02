@@ -1,8 +1,7 @@
 package io.github.dracosomething.awakened_lib.network.p2c;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
-import io.github.dracosomething.awakened_lib.dataAttachements.ChunkObjectsProvider;
-import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsAttachement;
+import io.github.dracosomething.awakened_lib.objects.data.ObjectsAttachement;
 import io.github.dracosomething.awakened_lib.network.Packet;
 import io.github.dracosomething.awakened_lib.network.Side;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;

@@ -1,8 +1,8 @@
 package io.github.dracosomething.awakened_lib.registry.dataAttachment;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
-import io.github.dracosomething.awakened_lib.dataAttachements.ChunkObjectsProvider;
-import io.github.dracosomething.awakened_lib.dataAttachements.ObjectsAttachement;
+import io.github.dracosomething.awakened_lib.objects.data.ChunkObjectsProvider;
+import io.github.dracosomething.awakened_lib.objects.data.ObjectsAttachement;
 import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
 import io.github.dracosomething.awakened_lib.manaSystem.data.blockEntity.BlockManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.data.blockEntity.BlockManaProvider;

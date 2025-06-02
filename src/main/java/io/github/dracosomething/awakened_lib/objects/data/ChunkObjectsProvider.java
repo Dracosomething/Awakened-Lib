@@ -1,9 +1,8 @@
-package io.github.dracosomething.awakened_lib.dataAttachements;
+package io.github.dracosomething.awakened_lib.objects.data;
 
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.jetbrains.annotations.Nullable;
