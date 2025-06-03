@@ -4,6 +4,7 @@ import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.events.SoulBoundItemsSetupEvent;
 import io.github.dracosomething.awakened_lib.helper.ClassHelper;
 import io.github.dracosomething.awakened_lib.helper.EnchantmentHelper;
+import io.github.dracosomething.awakened_lib.helper.MagicItemHelper;
 import io.github.dracosomething.awakened_lib.item.util.MagicItem;
 import io.github.dracosomething.awakened_lib.item.util.SoulBoundItem;
 import net.minecraft.core.component.DataComponents;
@@ -32,6 +33,10 @@ public class SoulBoundItemsHandler {
     private static List<Item> SOULBOUNDITEMS = new ArrayList<>();
     private static List<ItemStack> items = new ArrayList<>();
 
+    public static List<Item> getSOULBOUNDITEMS() {
+        return SOULBOUNDITEMS;
+    }
+
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             List<Item> items = BuiltInRegistries.ITEM.stream().filter((item) -> {
@@ -41,10 +46,6 @@ public class SoulBoundItemsHandler {
             items = event1.getItems();
             SOULBOUNDITEMS = items;
         });
-    }
-
-    private static boolean isSoulBoundItem(Item item) {
-        return SOULBOUNDITEMS.contains(item) && item != Items.AIR;
     }
 
     private static SoulBoundItem getAnotation(Class<?> obj) {
@@ -91,7 +92,7 @@ public class SoulBoundItemsHandler {
 
     @SubscribeEvent
     public static void onPlayerDropitem(ItemTossEvent event) {
-        if (isSoulBoundItem(event.getEntity().getItem().getItem())) {
+        if (MagicItemHelper.isSoulBoundItem(event.getEntity().getItem())) {
             Item item = event.getEntity().getItem().getItem();
             boolean bool = false;
             if (ClassHelper.isAnotatedWith(item.getClass(), SoulBoundItem.class)) {
@@ -110,7 +111,7 @@ public class SoulBoundItemsHandler {
     @SubscribeEvent
     public static void keepItems(PlayerTickEvent.Post event) {
         event.getEntity().getInventory().items.forEach((item) -> {
-            if (isSoulBoundItem(item.getItem())) {
+            if (MagicItemHelper.isSoulBoundItem(item)) {
                 CustomData data = item.get(DataComponents.CUSTOM_DATA);
                 if (data == null) return;
                 data.update(tag -> {

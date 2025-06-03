@@ -57,6 +57,11 @@ public class DataAttachmentRegistry {
     }
 
     public static void register(IEventBus eventBus) {
+        loadSystems();
+        ATTACHMENT_TYPES.register(eventBus);
+    }
+
+    public static void loadSystems() {
         StartUpHandler.getMANAGER().foreach((id, system) -> {
             ManaSystemHolder holder = new ManaSystemHolder(system);
             Supplier<AttachmentType<EntityManaHolder>> entitySupplier = ATTACHMENT_TYPES.register(
@@ -72,7 +77,6 @@ public class DataAttachmentRegistry {
             );
             BLOCK_SYSTEMS.put(system, blockSupplier);
         });
-        ATTACHMENT_TYPES.register(eventBus);
     }
 
     static {
