@@ -1,16 +1,16 @@
 package io.github.dracosomething.awakened_lib.item.util;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 @Target(ElementType.TYPE)
+@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SoulBoundItem {
-    boolean canBeDropped() default false;
+    String getSystemID() default "xp";
 
-    int getXPRequirement() default 0;
+    boolean canBeDropped() default true;
+
+    int getRequiredAmount() default 0;
 
     boolean keepsEnchantments() default true;
 
