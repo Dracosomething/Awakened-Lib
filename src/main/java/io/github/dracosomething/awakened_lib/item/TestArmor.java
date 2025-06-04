@@ -1,6 +1,7 @@
 package io.github.dracosomething.awakened_lib.item;
 
 import io.github.dracosomething.awakened_lib.item.util.MagicArmor;
+import io.github.dracosomething.awakened_lib.item.util.SoulBoundItem;
 import io.github.dracosomething.awakened_lib.registry.items.itemRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
