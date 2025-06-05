@@ -1,7 +1,16 @@
 package io.github.dracosomething.awakened_lib.helper;
 
+import io.github.dracosomething.awakened_lib.enchantment.MagicEnchantment;
+import io.github.dracosomething.awakened_lib.registry.dataComponents.DataComponentsRegistry;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantedItemInUse;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.effects.AllOf;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EnchantmentHelper {
     /**

@@ -18,26 +18,34 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class ChunkManaHolder extends ManaHolder<ChunkAccess> {
-    private int multiplier = RandomSource.create().nextInt(0, 100);
+    private int multiplier;
+    private long seed;
 
     public ChunkManaHolder(ManaSystemHolder holder) {
         super(holder);
+        this.seed = RandomSource.create().nextLong();
+        this.multiplier = RandomSource.create(seed).nextInt(0, 1000);
     }
 
     public int getMultiplier() {
         return multiplier;
     }
 
-    public void tick(Entity entity) {
+    public void tick(Entity entity, ChunkAccess access) {
         boolean flag = this.getISystem().getRegenerator() == RegenOn.CHUNK;
         if (flag) {
             EntityManaHolder holder = entity.getData(DataAttachmentRegistry.getEntity(getISystem()));
-            double newCurr = holder.getCurrent() + (this.getISystem().getRegen() * this.multiplier);
-            if (newCurr >= holder.getISystem().getMax()) {
-                newCurr = holder.getISystem().getMax();
+            double cost = this.getISystem().getRegen() * this.multiplier;
+            if (current >= cost) {
+                this.current -= cost;
+                double newCurr = holder.getCurrent() + cost;
+                if (newCurr >= holder.getISystem().getMax()) {
+                    newCurr = holder.getISystem().getMax();
+                }
+                holder.setCurrent(newCurr);
+                holder.sync(entity);
+                this.sync(access);
             }
-            holder.setCurrent(newCurr);
-            holder.sync(entity);
         }
     }
 
@@ -61,6 +69,8 @@ public class ChunkManaHolder extends ManaHolder<ChunkAccess> {
         CompoundTag tag = new CompoundTag();
         tag.putString("system", this.system.getSystem().getName());
         tag.putInt("multiplier", this.multiplier);
+        tag.putLong("seed", this.seed);
+        tag.putDouble("current", this.current);
         return tag;
     }
 
@@ -69,5 +79,7 @@ public class ChunkManaHolder extends ManaHolder<ChunkAccess> {
         ManaSystemHolder holder = new ManaSystemHolder(StartUpHandler.getMANAGER().get(tag.getString("system")));
         this.setSystem(holder);
         this.multiplier = tag.getInt("multiplier");
+        this.seed = tag.getLong("seed");
+        this.current = tag.getDouble("current");
     }
 }

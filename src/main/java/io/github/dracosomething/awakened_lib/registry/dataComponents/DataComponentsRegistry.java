@@ -1,27 +1,32 @@
 package io.github.dracosomething.awakened_lib.registry.dataComponents;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
+import io.github.dracosomething.awakened_lib.enchantment.MagicEnchantment;
 import io.github.dracosomething.awakened_lib.enchantment.SoulBound;
 import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
 import io.github.dracosomething.awakened_lib.manaSystem.data.item.ItemManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.systems.IManaSystem;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.util.Unit;
+import net.minecraft.world.item.enchantment.effects.AllOf;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class dataComponentsRegistry {
+public class DataComponentsRegistry {
     public static final DeferredRegister.DataComponents COMPONENTS;
     public static final DeferredRegister<DataComponentType<?>> ENCHANTMENT_COMPONENTS = DeferredRegister.create(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Awakened_lib.MODID);
     private static final Map<IManaSystem, DeferredHolder<DataComponentType<?>, DataComponentType<ItemManaHolder>>> ITEM_SYSTEMS = new HashMap<>();
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<SoulBound>> SOUL_BOUND = ENCHANTMENT_COMPONENTS.register("soul_bound", () ->
-        DataComponentType.<SoulBound>builder().persistent(SoulBound.CODEC).build()
-    );
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<SoulBound>> SOUL_BOUND;
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<MagicEnchantment<AllOf.EntityEffects>>>> MAGIC_ENCHANTMENT;
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> FIRE_PROOF;
+
     public static DeferredHolder<DataComponentType<?>, DataComponentType<ItemManaHolder>> getItem(IManaSystem system) {
         return ITEM_SYSTEMS.get(system);
     }
@@ -49,5 +54,14 @@ public class dataComponentsRegistry {
 
     static {
         COMPONENTS = DeferredRegister.createDataComponents(Awakened_lib.MODID);
+        SOUL_BOUND = ENCHANTMENT_COMPONENTS.register("soul_bound", () ->
+                DataComponentType.<SoulBound>builder().persistent(SoulBound.CODEC).build()
+        );
+        MAGIC_ENCHANTMENT = ENCHANTMENT_COMPONENTS.register("magic_enchantment", () ->
+                DataComponentType.<List<MagicEnchantment<AllOf.EntityEffects>>>builder().persistent(MagicEnchantment.codec(AllOf.EntityEffects.CODEC.codec()).listOf()).build()
+        );
+        FIRE_PROOF = ENCHANTMENT_COMPONENTS.register("fire_proof", () ->
+            DataComponentType.<Unit>builder().persistent(Unit.CODEC).build()
+        );
     }
 }

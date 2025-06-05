@@ -15,23 +15,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class BlockManaHolder extends ManaHolder<BlockEntity> {
-    private double current;
-
     public BlockManaHolder(ManaSystemHolder holder) {
         super(holder);
-    }
-
-    public double getCurrent() {
-        return current;
-    }
-
-    public void setCurrent(double current) {
-        if (current < 0)
-            this.current = 0;
-        else if (current >= this.getISystem().getMax())
-            this.current = this.getISystem().getMax();
-        else
-            this.current = current;
     }
 
     public void sync(BlockEntity holder) {

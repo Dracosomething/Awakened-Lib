@@ -6,10 +6,8 @@ import io.github.dracosomething.awakened_lib.handler.StartUpHandler;
 import io.github.dracosomething.awakened_lib.manaSystem.data.chunk.ChunkManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.data.entity.EntityManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.systems.IManaSystem;
-import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystem;
 import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystemHolder;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
-import io.github.dracosomething.awakened_lib.registry.dataComponents.dataComponentsRegistry;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -79,25 +77,44 @@ public class ItemManaHolder {
                     Level level = entity.level();
                     ChunkAccess chunk = level.getChunkAt(pos);
                     ChunkManaHolder chunkHolder = chunk.getData(DataAttachmentRegistry.getChunk(holder.getSystem()));
-                    double newCurr = this.getCurrent() + (rate * chunkHolder.getMultiplier());
-                    if (newCurr >= this.getSystem().getMax()) {
-                        newCurr = this.getSystem().getMax();
+                    double cost = chunkHolder.getISystem().getRegen() * chunkHolder.getMultiplier();
+                    if (chunkHolder.getCurrent() >= cost) {
+                        chunkHolder.setCurrent(chunkHolder.getCurrent() - cost);
+                        double newCurr = this.getCurrent() + cost;
+                        if (newCurr >= this.getSystem().getMax()) {
+                            newCurr = this.getSystem().getMax();
+                        }
+                        this.setCurrent(newCurr);
+                        chunkHolder.sync(chunk);
                     }
-                    this.setCurrent(newCurr);
                 }
             }
         }
     }
 
+    public double getCurrent() {
+        return current;
+    }
+
     public void setCurrent(double current) {
         if (current < 0)
             this.current = 0;
+        else if (current >= this.getSystem().getMax())
+            this.current = this.getSystem().getMax();
         else
             this.current = current;
     }
 
-    public double getCurrent() {
-        return current;
+    public boolean canSetCurrent(double cost) {
+        return this.current >= cost;
+    }
+
+    public boolean updateCurrent(double cost) {
+        if (canSetCurrent(cost)) {
+            this.setCurrent(this.getCurrent() - cost);
+            return true;
+        }
+        return false;
     }
 
     public ManaSystemHolder getHolder() {

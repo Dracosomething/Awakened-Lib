@@ -14,21 +14,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class EntityManaHolder extends ManaHolder<Entity> {
-    private double current;
-
     public EntityManaHolder(ManaSystemHolder holder) {
         super(holder);
-    }
-
-    public void setCurrent(double current) {
-        if (current < 0)
-            this.current = 0;
-        else
-            this.current = current;
-    }
-
-    public double getCurrent() {
-        return current;
     }
 
     public void tick(Entity entity) {

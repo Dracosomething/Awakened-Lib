@@ -18,7 +18,7 @@ public record SoulBound(
                 Codec.INT.optionalFieldOf("required_amount", 0).forGetter(SoulBound::requiredAmount),
                 Codec.BOOL.optionalFieldOf("keeps_enchantments", true).forGetter(SoulBound::keepsEnchantments),
                 Codec.INT.optionalFieldOf("durability_cost", 0).forGetter(SoulBound::durabilityCost),
-                Codec.DOUBLE.optionalFieldOf("minimum_durability", 0).forGetter(SoulBound::minimumDurability)
+                Codec.DOUBLE.optionalFieldOf("minimum_durability", 0d).forGetter(SoulBound::minimumDurability)
         ).apply(builder, SoulBound::new)
     );
 }

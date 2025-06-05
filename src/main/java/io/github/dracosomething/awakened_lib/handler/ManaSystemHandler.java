@@ -2,15 +2,12 @@ package io.github.dracosomething.awakened_lib.handler;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.events.ManaSystemEvent;
-import io.github.dracosomething.awakened_lib.helper.ClassHelper;
 import io.github.dracosomething.awakened_lib.helper.MagicItemHelper;
-import io.github.dracosomething.awakened_lib.item.util.MagicItem;
-import io.github.dracosomething.awakened_lib.item.util.SoulBoundItem;
 import io.github.dracosomething.awakened_lib.manaSystem.data.chunk.ChunkManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.data.entity.EntityManaHolder;
 import io.github.dracosomething.awakened_lib.manaSystem.data.item.ItemManaHolder;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
-import io.github.dracosomething.awakened_lib.registry.dataComponents.dataComponentsRegistry;
+import io.github.dracosomething.awakened_lib.registry.dataComponents.DataComponentsRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +23,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 public class ManaSystemHandler {
     @SubscribeEvent
     public static void reloadSystems(ManaSystemEvent.ManaSystemGatherEvent event) {
-        dataComponentsRegistry.loadSystems();
+        DataComponentsRegistry.loadSystems();
         DataAttachmentRegistry.loadSystems();
     }
 
@@ -42,7 +39,7 @@ public class ManaSystemHandler {
                         Level level = entity.level();
                         ChunkAccess chunk = level.getChunkAt(pos);
                         ChunkManaHolder holder = chunk.getData(DataAttachmentRegistry.getChunk(system));
-                        holder.tick(entity);
+                        holder.tick(entity, chunk);
                     }
                     case PLAYER -> {
                         EntityManaHolder holder = entity.getData(DataAttachmentRegistry.getEntity(system));
@@ -52,11 +49,11 @@ public class ManaSystemHandler {
                 if (entity.getWeaponItem() != null) {
                     ItemStack item = entity.getWeaponItem();
                     if (MagicItemHelper.isMagicItem(item)) {
-                        ItemManaHolder holder = item.get(dataComponentsRegistry.getItem(system));
+                        ItemManaHolder holder = item.get(DataComponentsRegistry.getItem(system));
                         if (holder != null) {
                             holder.tick(item, event.getEntity());
                         } else {
-                            item.set(dataComponentsRegistry.getItem(system), new ItemManaHolder(system));
+                            item.set(DataComponentsRegistry.getItem(system), new ItemManaHolder(system));
                         }
                     }
                 }
@@ -71,11 +68,11 @@ public class ManaSystemHandler {
             if (canTick) {
                 event.getEntity().getInventory().items.forEach((item) -> {
                     if (MagicItemHelper.isMagicItem(item)) {
-                        ItemManaHolder holder = item.get(dataComponentsRegistry.getItem(system));
+                        ItemManaHolder holder = item.get(DataComponentsRegistry.getItem(system));
                         if (holder != null) {
                             holder.tick(item, event.getEntity());
                         } else {
-                            item.set(dataComponentsRegistry.getItem(system), new ItemManaHolder(system));
+                            item.set(DataComponentsRegistry.getItem(system), new ItemManaHolder(system));
                         }
                     }
                 });
