@@ -7,7 +7,9 @@ import io.github.dracosomething.awakened_lib.helper.ClassHelper;
 import io.github.dracosomething.awakened_lib.item.util.MagicArmor;
 import io.github.dracosomething.awakened_lib.registry.dataComponents.DataComponentsRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -17,6 +19,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.enchantment.EnchantedItemInUse;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -59,7 +62,15 @@ public class MagicItemHandler {
                 (ench, lvl) -> {
                     Enchantment enchantment = ench.value();
                     if (enchantment.effects().has(DataComponentsRegistry.FIRE_PROOF.get())) {
-                        event.getFrom().
+                        event.getTo().set(DataComponents.FIRE_RESISTANT, Unit.INSTANCE);
+                        CustomData data = event.getTo().get(DataComponents.CUSTOM_DATA);
+                        if (data == null) return;
+                        data.update(tag -> {
+                            if (!tag.contains("awakened_lib:originalFireProof")) {
+                                tag.putBoolean("awakened_lib:originalFireProof", event.getFrom().has(DataComponents.FIRE_RESISTANT));
+                            }
+                        });
+                        event.getTo().set(DataComponents.CUSTOM_DATA, data);
                     }
                 }
         );
