@@ -7,17 +7,17 @@ import io.github.dracosomething.awakened_lib.enchantment.valueEffect.LevelValue;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
 public record Subtract(
-        LevelBasedValue value,
-        LevelBasedValue level
+        LevelBasedValue value2,
+        LevelBasedValue value1
 ) implements LevelBasedValue {
     public static final MapCodec<Subtract> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
-            LevelBasedValue.CODEC.fieldOf("value").forGetter(Subtract::value),
-            LevelBasedValue.CODEC.optionalFieldOf("level", new LevelValue()).forGetter(Subtract::level)
+            LevelBasedValue.CODEC.fieldOf("value_2").forGetter(Subtract::value2),
+            LevelBasedValue.CODEC.optionalFieldOf("value_1", new LevelValue()).forGetter(Subtract::value1)
     ).apply(builder, Subtract::new));
 
     @Override
     public float calculate(int i) {
-        return level().calculate(i) - value.calculate(i);
+        return value1.calculate(i) - value2.calculate(i);
     }
 
     @Override

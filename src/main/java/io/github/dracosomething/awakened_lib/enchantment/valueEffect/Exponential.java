@@ -8,17 +8,17 @@ import net.minecraft.world.item.enchantment.LevelBasedValue;
 public record Exponential(
         LevelBasedValue base,
         LevelBasedValue scaleFactor,
-        LevelBasedValue value
+        LevelBasedValue exponent
 ) implements LevelBasedValue {
     public static final MapCodec<Exponential> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             LevelBasedValue.CODEC.fieldOf("base").forGetter(Exponential::base),
-            LevelBasedValue.CODEC.fieldOf("scaleFactor").forGetter(Exponential::scaleFactor),
-            LevelBasedValue.CODEC.optionalFieldOf("value", new LevelValue()).forGetter(Exponential::value)
+            LevelBasedValue.CODEC.fieldOf("scale_factor").forGetter(Exponential::scaleFactor),
+            LevelBasedValue.CODEC.optionalFieldOf("exponent", new LevelValue()).forGetter(Exponential::exponent)
     ).apply(builder, Exponential::new));
 
     @Override
     public float calculate(int i) {
-        return (float) (Math.pow(scaleFactor.calculate(i), value.calculate(i)) * base.calculate(i));
+        return (float) (Math.pow(scaleFactor.calculate(i), exponent.calculate(i)) * base.calculate(i));
     }
 
     @Override

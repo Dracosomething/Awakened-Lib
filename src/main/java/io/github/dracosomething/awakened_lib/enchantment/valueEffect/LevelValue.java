@@ -6,7 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 
 public record LevelValue() implements LevelBasedValue {
-    public static final Codec<LevelValue> CODEC = Codec.unit(LevelValue::new);
+    public static final MapCodec<LevelValue> CODEC = MapCodec.unit(LevelValue::new);
 
     @Override
     public float calculate(int i) {
@@ -15,6 +15,6 @@ public record LevelValue() implements LevelBasedValue {
 
     @Override
     public MapCodec<? extends LevelBasedValue> codec() {
-        return null;
+        return CODEC;
     }
 }

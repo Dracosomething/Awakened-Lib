@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.enchantment.SoulBound;
 import io.github.dracosomething.awakened_lib.enchantment.valueEffect.Exponential;
+import io.github.dracosomething.awakened_lib.enchantment.valueEffect.LevelValue;
 import io.github.dracosomething.awakened_lib.enchantment.valueEffect.Logistic;
 import io.github.dracosomething.awakened_lib.enchantment.valueEffect.operators.*;
 import net.minecraft.core.component.DataComponentType;
@@ -20,8 +21,6 @@ public class MathEnchantmentEffectRegistry {
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<CubeRoot>> CUBE_ROOT;
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Divide>> DIVIDE;
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Log>> LOG;
-    public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Log10>> LOG_10;
-    public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Log1p>> LOG_1P;
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Multiply>> MULTIPLY;
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Power>> POWER;
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Round>> ROUND;
@@ -30,6 +29,7 @@ public class MathEnchantmentEffectRegistry {
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Exponential>> EXPONENTIAL;
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Logistic>> LOGISTIC;
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Invert>> INVERT;
+    public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<LevelValue>> LEVEL;
 
     public static void register(IEventBus bus) {
         ENCHANTMENT_COMPONENTS.register(bus);
@@ -42,8 +42,6 @@ public class MathEnchantmentEffectRegistry {
         CUBE_ROOT = ENCHANTMENT_COMPONENTS.register("cube_root", () -> CubeRoot.CODEC);
         DIVIDE = ENCHANTMENT_COMPONENTS.register("divide", () -> Divide.CODEC);
         LOG = ENCHANTMENT_COMPONENTS.register("log", () -> Log.CODEC);
-        LOG_10 = ENCHANTMENT_COMPONENTS.register("log_10", () -> Log10.CODEC);
-        LOG_1P = ENCHANTMENT_COMPONENTS.register("log_1p", () -> Log1p.CODEC);
         MULTIPLY = ENCHANTMENT_COMPONENTS.register("multiply", () -> Multiply.CODEC);
         POWER = ENCHANTMENT_COMPONENTS.register("power", () -> Power.CODEC);
         ROUND = ENCHANTMENT_COMPONENTS.register("round", () -> Round.CODEC);
@@ -52,5 +50,6 @@ public class MathEnchantmentEffectRegistry {
         EXPONENTIAL = ENCHANTMENT_COMPONENTS.register("exponential", () -> Exponential.CODEC);
         LOGISTIC = ENCHANTMENT_COMPONENTS.register("logistic", () -> Logistic.CODEC);
         INVERT = ENCHANTMENT_COMPONENTS.register("invert", () -> Invert.CODEC);
+        LEVEL = ENCHANTMENT_COMPONENTS.register("value", () -> LevelValue.CODEC);
     }
 }

@@ -398,7 +398,7 @@ public abstract class TickingObject implements Clearable {
         }
         tag.putUUID("UUID", this.uuid);
         CompoundTag key = NBTHelper.parseResourceKey(this.level.dimension());
-        tag.put("level", key);
+        tag.put("value", key);
         tag.putBoolean("placed", this.placed);
         tag.putDouble("gravity", this.gravity);
         tag.putBoolean("physics", this.physics);

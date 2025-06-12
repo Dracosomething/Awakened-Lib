@@ -9,7 +9,7 @@ public record Invert(
         LevelBasedValue value
 ) implements LevelBasedValue {
     public static final MapCodec<Invert> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
-            LevelBasedValue.CODEC.optionalFieldOf("level", new LevelValue()).forGetter(Invert::value)
+            LevelBasedValue.CODEC.optionalFieldOf("value", new LevelValue()).forGetter(Invert::value)
     ).apply(builder, Invert::new));
 
     @Override
