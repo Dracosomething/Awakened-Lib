@@ -19,11 +19,13 @@ public class EntityManaHolder extends ManaHolder<Entity> {
     }
 
     public void tick(Entity entity) {
+        if (this.max > this.getISystem().getMax())
+            this.max = this.getISystem().getMax();
         boolean flag = this.getISystem().getRegenerator() == RegenOn.PLAYER;
         if (flag) {
             double newCurr = this.getCurrent() + this.getISystem().getRegen();
-            if (newCurr >= this.getISystem().getMax()) {
-                newCurr = this.getISystem().getMax();
+            if (newCurr >= this.getMax()) {
+                newCurr = this.getMax();
             }
             this.setCurrent(newCurr);
             this.sync(entity);
@@ -49,6 +51,7 @@ public class EntityManaHolder extends ManaHolder<Entity> {
         CompoundTag tag = new CompoundTag();
         tag.putDouble("current", this.current);
         tag.putString("system", this.system.getSystem().getName());
+        tag.putDouble("max", this.max);
         return tag;
     }
 
@@ -57,5 +60,6 @@ public class EntityManaHolder extends ManaHolder<Entity> {
         ManaSystemHolder holder = new ManaSystemHolder(StartUpHandler.getMANAGER().get(tag.getString("system")));
         this.setSystem(holder);
         this.current = tag.getDouble("current");
+        this.max = tag.getDouble("max");
     }
 }

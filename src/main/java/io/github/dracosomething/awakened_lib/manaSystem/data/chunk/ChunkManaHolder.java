@@ -32,6 +32,8 @@ public class ChunkManaHolder extends ManaHolder<ChunkAccess> {
     }
 
     public void tick(Entity entity, ChunkAccess access) {
+        if (this.max > this.getISystem().getMax())
+            this.max = this.getISystem().getMax();
         boolean flag = this.getISystem().getRegenerator() == RegenOn.CHUNK;
         if (flag) {
             EntityManaHolder holder = entity.getData(DataAttachmentRegistry.getEntity(getISystem()));
@@ -39,8 +41,8 @@ public class ChunkManaHolder extends ManaHolder<ChunkAccess> {
             if (current >= cost) {
                 this.current -= cost;
                 double newCurr = holder.getCurrent() + cost;
-                if (newCurr >= holder.getISystem().getMax()) {
-                    newCurr = holder.getISystem().getMax();
+                if (newCurr >= holder.getMax()) {
+                    newCurr = holder.getMax();
                 }
                 holder.setCurrent(newCurr);
                 holder.sync(entity);
@@ -71,6 +73,7 @@ public class ChunkManaHolder extends ManaHolder<ChunkAccess> {
         tag.putInt("multiplier", this.multiplier);
         tag.putLong("seed", this.seed);
         tag.putDouble("current", this.current);
+        tag.putDouble("max", this.max);
         return tag;
     }
 
@@ -81,5 +84,6 @@ public class ChunkManaHolder extends ManaHolder<ChunkAccess> {
         this.multiplier = tag.getInt("multiplier");
         this.seed = tag.getLong("seed");
         this.current = tag.getDouble("current");
+        this.max = tag.getDouble("max");
     }
 }

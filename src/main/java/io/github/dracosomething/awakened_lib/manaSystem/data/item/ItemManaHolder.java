@@ -33,6 +33,7 @@ public class ItemManaHolder {
     );
 
     private final ManaSystemHolder holder;
+    private double max;
     private double current;
     private final String systemID;
 
@@ -48,8 +49,22 @@ public class ItemManaHolder {
         this.holder = new ManaSystemHolder(StartUpHandler.getMANAGER().get(id));
     }
 
+    public double getMax() {
+        return max;
+    }
+
+    public void setMax(double max) {
+        if (this.max > this.getSystem().getMax()) {
+            this.max = this.getSystem().getMax();
+        } else {
+            this.max = max;
+        }
+    }
+
     public void tick(ItemStack stack, Entity entity) {
-        if (this.getCurrent() < this.getHolder().getSystem().getMax()) {
+        if (this.max > this.getSystem().getMax())
+            this.max = this.getSystem().getMax();
+        if (this.getCurrent() < this.getMax()) {
             double rate = holder.getSystem().getRegen();
             switch (holder.getSystem().getRegenerator()) {
                 case PLAYER -> {
@@ -58,9 +73,9 @@ public class ItemManaHolder {
                         double newCurr = entityHolder.getCurrent() - rate;
                         double thisCurr = this.getCurrent() + rate;
                         double diff;
-                        if (thisCurr >= this.getSystem().getMax()) {
-                            diff = thisCurr - this.getSystem().getMax();
-                            thisCurr = this.getSystem().getMax();
+                        if (thisCurr >= this.getMax()) {
+                            diff = thisCurr - this.getMax();
+                            thisCurr = this.getMax();
                             newCurr = entityHolder.getCurrent() + diff;
                         }
                         if (newCurr < 0) {
@@ -81,8 +96,8 @@ public class ItemManaHolder {
                     if (chunkHolder.getCurrent() >= cost) {
                         chunkHolder.setCurrent(chunkHolder.getCurrent() - cost);
                         double newCurr = this.getCurrent() + cost;
-                        if (newCurr >= this.getSystem().getMax()) {
-                            newCurr = this.getSystem().getMax();
+                        if (newCurr >= this.getMax()) {
+                            newCurr = this.getMax();
                         }
                         this.setCurrent(newCurr);
                         chunkHolder.sync(chunk);
@@ -99,8 +114,8 @@ public class ItemManaHolder {
     public void setCurrent(double current) {
         if (current < 0)
             this.current = 0;
-        else if (current >= this.getSystem().getMax())
-            this.current = this.getSystem().getMax();
+        else if (current >= this.getMax())
+            this.current = this.getMax();
         else
             this.current = current;
     }

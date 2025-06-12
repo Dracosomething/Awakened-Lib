@@ -24,7 +24,7 @@ public class DataComponentsRegistry {
     public static final DeferredRegister<DataComponentType<?>> ENCHANTMENT_COMPONENTS = DeferredRegister.create(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, Awakened_lib.MODID);
     private static final Map<IManaSystem, DeferredHolder<DataComponentType<?>, DataComponentType<ItemManaHolder>>> ITEM_SYSTEMS = new HashMap<>();
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<SoulBound>> SOUL_BOUND;
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<MagicEnchantment<AllOf.EntityEffects>>>> MAGIC_ENCHANTMENT;
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<MagicEnchantment>> MAGIC_ENCHANTMENT;
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> FIRE_PROOF;
 
     public static DeferredHolder<DataComponentType<?>, DataComponentType<ItemManaHolder>> getItem(IManaSystem system) {
@@ -58,7 +58,7 @@ public class DataComponentsRegistry {
                 DataComponentType.<SoulBound>builder().persistent(SoulBound.CODEC).build()
         );
         MAGIC_ENCHANTMENT = ENCHANTMENT_COMPONENTS.register("magic_enchantment", () ->
-                DataComponentType.<List<MagicEnchantment<AllOf.EntityEffects>>>builder().persistent(MagicEnchantment.codec(AllOf.EntityEffects.CODEC.codec()).listOf()).build()
+                DataComponentType.<MagicEnchantment>builder().persistent(MagicEnchantment.CODEC).build()
         );
         FIRE_PROOF = ENCHANTMENT_COMPONENTS.register("fire_proof", () ->
             DataComponentType.<Unit>builder().persistent(Unit.CODEC).build()

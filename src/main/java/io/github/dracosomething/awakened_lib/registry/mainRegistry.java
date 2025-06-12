@@ -2,6 +2,7 @@ package io.github.dracosomething.awakened_lib.registry;
 
 import io.github.dracosomething.awakened_lib.manaSystem.systems.ManaSystem;
 import io.github.dracosomething.awakened_lib.manaSystem.systems.RegenOn;
+import io.github.dracosomething.awakened_lib.registry.ItemConditions.LootItemConditionRegistry;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import io.github.dracosomething.awakened_lib.registry.dataComponents.DataComponentsRegistry;
 import io.github.dracosomething.awakened_lib.registry.items.itemRegistry;
@@ -15,6 +16,7 @@ public class mainRegistry {
         objectRegistry.register(bus);
         DataAttachmentRegistry.register(bus);
         DataComponentsRegistry.register(bus);
+        LootItemConditionRegistry.register(bus);
         itemRegistry.register(bus);
         ClientPayloadRegistry.register();
     }

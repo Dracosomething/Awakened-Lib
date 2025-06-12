@@ -12,6 +12,7 @@ public abstract class ManaHolder<T extends IAttachmentHolder> implements INBTSer
     private T attacher;
     protected ManaSystemHolder system;
     private boolean initialized = false;
+    protected double max;
     protected double current;
 
     public ManaHolder (ManaSystemHolder holder) {
@@ -32,6 +33,18 @@ public abstract class ManaHolder<T extends IAttachmentHolder> implements INBTSer
 
     public abstract ManaHolder<T> getFrom(T holder);
 
+    public double getMax() {
+        return max;
+    }
+
+    public void setMax(double max) {
+        if (this.max > this.getISystem().getMax()) {
+            this.max = this.getISystem().getMax();
+        } else {
+            this.max = max;
+        }
+    }
+
     public ManaSystemHolder getSystem() {
         return system;
     }
@@ -51,8 +64,8 @@ public abstract class ManaHolder<T extends IAttachmentHolder> implements INBTSer
     public void setCurrent(double current) {
         if (current < 0)
             this.current = 0;
-        else if (current >= this.getISystem().getMax())
-            this.current = this.getISystem().getMax();
+        else if (current >= this.getMax())
+            this.current = this.getMax();
         else
             this.current = current;
     }

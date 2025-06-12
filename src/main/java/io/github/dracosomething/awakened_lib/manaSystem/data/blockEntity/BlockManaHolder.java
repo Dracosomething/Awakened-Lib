@@ -34,6 +34,7 @@ public class BlockManaHolder extends ManaHolder<BlockEntity> {
     public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putDouble("current", this.current);
+        tag.putDouble("max", this.max);
         tag.putString("system", this.system.getSystem().getName());
         return tag;
     }
@@ -43,5 +44,6 @@ public class BlockManaHolder extends ManaHolder<BlockEntity> {
         ManaSystemHolder holder = new ManaSystemHolder(StartUpHandler.getMANAGER().get(tag.getString("system")));
         this.setSystem(holder);
         this.current = tag.getDouble("current");
+        this.max = tag.getDouble("max");
     }
 }
