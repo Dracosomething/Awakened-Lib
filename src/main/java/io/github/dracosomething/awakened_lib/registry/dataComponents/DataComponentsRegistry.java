@@ -39,6 +39,7 @@ public class DataComponentsRegistry {
         loadSystems();
         COMPONENTS.register(bus);
         ENCHANTMENT_COMPONENTS.register(bus);
+        MathEnchantmentEffectRegistry.register(bus);
     }
 
     public static void loadSystems() {

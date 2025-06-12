@@ -1,7 +1,7 @@
 package io.github.dracosomething.awakened_lib.registry.ItemConditions;
 
 import io.github.dracosomething.awakened_lib.Awakened_lib;
-import io.github.dracosomething.awakened_lib.enchantment.ManaCondition;
+import io.github.dracosomething.awakened_lib.lootConditions.ManaCondition;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.neoforged.bus.api.IEventBus;

@@ -1,9 +1,6 @@
-package io.github.dracosomething.awakened_lib.enchantment;
+package io.github.dracosomething.awakened_lib.lootConditions;
 
-import com.mojang.serialization.Codec;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.util.Unit;
-import net.minecraft.world.entity.EquipmentSlot;
 
 public enum ManaSource implements StringRepresentable {
     PLAYER,
