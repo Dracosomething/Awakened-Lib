@@ -6,46 +6,29 @@ import io.github.dracosomething.awakened_lib.helper.ArmorHelper;
 import io.github.dracosomething.awakened_lib.helper.ClassHelper;
 import io.github.dracosomething.awakened_lib.item.util.MagicArmor;
 import io.github.dracosomething.awakened_lib.registry.dataComponents.DataComponentsRegistry;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Unit;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.enchantment.EnchantedItemInUse;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.EnchantmentTarget;
-import net.minecraft.world.item.enchantment.effects.AllOf;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.VanillaGameEvent;
-import net.neoforged.neoforge.event.enchanting.EnchantmentLevelSetEvent;
-import net.neoforged.neoforge.event.enchanting.GetEnchantmentLevelEvent;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
-
-import java.util.List;
 
 @EventBusSubscriber(modid = Awakened_lib.MODID)
 public class MagicItemHandler {
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
+        applyFullSetBonus(event);
+        applyFireResistant(event);
+        removeFireResistant(event);
+    }
+
+    private static void applyFullSetBonus(LivingEquipmentChangeEvent event) {
         if (ClassHelper.hasInterface(event.getTo().getItem().getClass(), MagicArmor.class)) {
             MagicArmor magicArmor = (MagicArmor) event.getTo().getItem();
             if (magicArmor.hasFullSetBonus()) {
@@ -57,6 +40,9 @@ public class MagicItemHandler {
                 }
             }
         }
+    }
+
+    private static void applyFireResistant(LivingEquipmentChangeEvent event) {
         EnchantmentHelper.runIterationOnItem(
                 event.getTo(),
                 (ench, lvl) -> {
@@ -68,6 +54,57 @@ public class MagicItemHandler {
                         data.update(tag -> {
                             if (!tag.contains("awakened_lib:originalFireProof")) {
                                 tag.putBoolean("awakened_lib:originalFireProof", event.getFrom().has(DataComponents.FIRE_RESISTANT));
+                            }
+                        });
+                        event.getTo().set(DataComponents.CUSTOM_DATA, data);
+                    }
+                }
+        );
+    }
+
+    private static void removeFireResistant(LivingEquipmentChangeEvent event) {
+        EnchantmentHelper.runIterationOnItem(
+                event.getFrom(),
+                (ench, lvl) -> {
+                    Enchantment enchantment = ench.value();
+                    if (enchantment.effects().has(DataComponentsRegistry.FIRE_PROOF.get())) {
+                        CustomData data = event.getFrom().get(DataComponents.CUSTOM_DATA);
+                        if (data == null) return;
+                        CompoundTag tag = data.copyTag();
+                        if (tag.contains("awakened_lib:originalFireProof") && tag.getBoolean("awakened_lib:originalFireProof")) {
+                            event.getTo().set(DataComponents.FIRE_RESISTANT, Unit.INSTANCE);
+                        } else {
+                            event.getTo().remove(DataComponents.FIRE_RESISTANT);
+                        }
+                        data.update(compoundTag -> {
+                            if (compoundTag.contains("awakened_lib:originalFireProof")) {
+                                compoundTag.remove("awakened_lib:originalFireProof");
+                            }
+                        });
+                        event.getTo().set(DataComponents.CUSTOM_DATA, data);
+                    }
+                }
+        );
+    }
+
+    private static void removeManaSystem(LivingEquipmentChangeEvent event) {
+        EnchantmentHelper.runIterationOnItem(
+                event.getFrom(),
+                (ench, lvl) -> {
+                    Enchantment enchantment = ench.value();
+                    if (enchantment.effects().has(DataComponentsRegistry.MAGIC_ENCHANTMENT.get())) {
+                        MagicEnchantment magic = enchantment.effects().get(DataComponentsRegistry.MAGIC_ENCHANTMENT.get());
+                        CustomData data = event.getFrom().get(DataComponents.CUSTOM_DATA);
+                        if (data == null) return;
+                        CompoundTag tag = data.copyTag();
+                        if (tag.contains("awakened_lib:originalMagic") && tag.getBoolean("awakened_lib:originalMagic")) {
+                            event.getTo().set(DataComponents.FIRE_RESISTANT, Unit.INSTANCE);
+                        } else {
+                            event.getTo().remove(DataComponents.FIRE_RESISTANT);
+                        }
+                        data.update(compoundTag -> {
+                            if (compoundTag.contains("awakened_lib:originalFireProof")) {
+                                compoundTag.remove("awakened_lib:originalFireProof");
                             }
                         });
                         event.getTo().set(DataComponents.CUSTOM_DATA, data);
