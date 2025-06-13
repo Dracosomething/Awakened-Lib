@@ -1,6 +1,7 @@
 package io.github.dracosomething.awakened_lib.ability;
 
 import io.github.dracosomething.awakened_lib.api.ability.AbilityAPI;
+import io.github.dracosomething.awakened_lib.api.ability.IAbility;
 import io.github.dracosomething.awakened_lib.manaSystem.systems.IManaSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -11,7 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
-public class Ability {
+public class Ability implements IAbility {
     private final CompoundTag tag = new CompoundTag();
     private final IManaSystem system;
 

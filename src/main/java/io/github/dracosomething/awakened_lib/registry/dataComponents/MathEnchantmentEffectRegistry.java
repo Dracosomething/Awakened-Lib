@@ -29,6 +29,7 @@ public class MathEnchantmentEffectRegistry {
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Exponential>> EXPONENTIAL;
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Logistic>> LOGISTIC;
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<Invert>> INVERT;
+    public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<IfElse>> IF_ELSE;
     public static final DeferredHolder<MapCodec<? extends LevelBasedValue>, MapCodec<LevelValue>> LEVEL;
 
     public static void register(IEventBus bus) {
@@ -50,6 +51,7 @@ public class MathEnchantmentEffectRegistry {
         EXPONENTIAL = ENCHANTMENT_COMPONENTS.register("exponential", () -> Exponential.CODEC);
         LOGISTIC = ENCHANTMENT_COMPONENTS.register("logistic", () -> Logistic.CODEC);
         INVERT = ENCHANTMENT_COMPONENTS.register("invert", () -> Invert.CODEC);
-        LEVEL = ENCHANTMENT_COMPONENTS.register("value", () -> LevelValue.CODEC);
+        IF_ELSE = ENCHANTMENT_COMPONENTS.register("if_else", () -> IfElse.CODEC);
+        LEVEL = ENCHANTMENT_COMPONENTS.register("level", () -> LevelValue.CODEC);
     }
 }

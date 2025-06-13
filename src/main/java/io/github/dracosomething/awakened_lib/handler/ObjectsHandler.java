@@ -4,6 +4,7 @@ import io.github.dracosomething.awakened_lib.Awakened_lib;
 import io.github.dracosomething.awakened_lib.objects.TestProjectile;
 import io.github.dracosomething.awakened_lib.registry.dataAttachment.DataAttachmentRegistry;
 import io.github.dracosomething.awakened_lib.registry.object.objectRegistry;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -25,5 +26,10 @@ public class ObjectsHandler {
         Vec2 rot = event.getEntity().getRotationVector();
         TestProjectile projectile = objectRegistry.EXAMPLE_PROJECTILE.get().create(1000, event.getLevel(), event.getPos().getCenter());
         projectile.shootFromRotation((float) rot.x, (float) rot.y, (float) 0.0F, 1, 0.1F);
+    }
+
+    @SubscribeEvent
+    public static void getData(PlayerInteractEvent.EntityInteract event) {
+        System.out.println(event.getTarget().saveWithoutId(new CompoundTag()));
     }
 }

@@ -7,16 +7,16 @@
     "minecraft:damage": [
       {
         "effect": {
-          "type": "minecraft:add",
-          "value": {
+          "type": "minecraft:multiply",
+          "factor": {
             "type": "awakened_lib:exponential",
-            "base": 1,
+            "base": 1.0,
             "scale_factor": {
               "type": "awakened_lib:level"
             },
             "exponent": {
-              "type": "awakened_lib:divide",
-              "base": 7,
+              "type": "awakened_lib:log",
+              "base": 7.0,
               "exponent": {
                 "type": "awakened_lib:level"
               }
